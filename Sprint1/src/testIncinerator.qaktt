@@ -1,0 +1,117 @@
+System testincinerator
+
+//messages
+Event burnEnd : burnEnd(N)
+Dispatch activation_command : activation_command(N)
+Dispatch startBurn : startBurn(N)
+
+
+//test messages
+Dispatch info : info(N)
+
+Request activation_test : activation_test(N)
+Reply activation_reply : activation_reply(X) for activation_test
+
+Request start_test : start_test(N)
+Reply start_reply : start_reply(N) for start_test
+
+Context ctxtest ip [host="localhost" port=8080]
+
+QActor incinerator context ctxtest{
+	[#
+        val BTIME = 4000L;
+        var start = "off";
+	#]
+	
+	State s0 initial{
+		println("incinerator ready...") color green
+		delay 1000
+	}
+	
+	Transition t0
+		whenMsg activation_command -> start
+		
+	
+	State start{
+		println("the incinerator has started...") color green
+		[# start ="on"; #]
+		updateResource [# "info($start)" #] 
+	}
+	
+	Transition t1
+		whenMsg startBurn -> handleBurn
+		
+	State handleBurn{
+		println("the incinerator is burning...") color green
+		delay 15000
+		emit burnEnd : burnEnd(finish)
+		
+		
+	}
+	
+	Transition t2
+		whenMsg startBurn -> handleBurn
+		
+}
+
+QActor incineratorobserver context ctxtest{
+	State s0 initial{
+		println("incinerator OBSERVER ready...") color red
+		observeResource incinerator msgid info
+		delay 1000
+	}
+	Goto idle
+	
+	State idle{
+		println("obs idle...") color red
+	}
+	
+	Transition t1
+		whenRequest activation_test -> handleActivation 
+		whenRequest start_test -> handleStart
+		
+	State handleActivation{
+		forward incinerator -m activation_command : activation_command(start)
+		println("activation command inviato...") color red
+	}
+	
+	Transition t2
+		whenMsg info -> handleInfo
+		
+	
+	State handleInfo{
+		onMsg( info :  info(N) ){
+				[#var incstate = payloadArg(0)  
+				if(incstate.equals("on")){
+				#]	
+		println("incinerator state : $incstate ...") color red
+		replyTo activation_test with activation_reply : activation_reply(ok) //fine test
+		
+		[#
+		}
+		#]
+		}
+		
+	}
+	
+	Goto idle
+	
+	State handleStart{
+		//after the first activation test (ONLY AFTER)
+		forward incinerator -m startBurn : startBurn(start)
+		println("startBurn command inviato...") color red
+	}
+	
+	
+	Transition t3 whenEvent burnEnd -> handleBurn
+	
+	
+	State handleBurn{
+		replyTo start_test with start_reply : start_reply(ok)
+		println("start_reply inviata ...") color red
+	}
+	
+	Goto idle
+	
+}
+

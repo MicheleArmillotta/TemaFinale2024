@@ -1,0 +1,295 @@
+System sprintuno
+
+Event burnEnd : burnEnd(N)
+Dispatch activation_command : activation_command(N)
+Dispatch startBurn : startBurn(N)
+//WIS e opRobot
+Dispatch startRobot : startRobot(X)
+//messaggi di interazione tra opRobot e basicRobot24
+Request engage        : engage(OWNER, STEPTIME)
+Reply   engagedone    : engagedone(ARG) for engage
+Reply   engagerefused : engagerefused(ARG) for engage
+Request moverobot    :  moverobot(TARGETX, TARGETY)
+Reply moverobotdone  :  moverobotok(ARG)
+Reply moverobotfailed:  moverobotfailed(PLANDONE, PLANTODO)
+//updateResources
+//Dispatch updatePosition : updatePosition(X)
+Dispatch info : info(X, Y)
+
+Context ctxsprintuno ip [host="localhost" port=8080]
+Context ctxbasicrobot ip [host="127.0.0.1"  port=8020]
+
+ExternalQActor basicrobot context ctxbasicrobot
+
+QActor wis context ctxsprintuno{
+	[#
+		var RobPos = ""
+		var RP_w = 0
+		var Ash_distance = 0
+		var Inc_stat = "off"
+		val Ash_limit = 10  //qualche misura
+		var rob = "idle" 
+		
+	#]
+	
+	State s0 initial{
+		println("WIS: wis starting...") color red
+		delay 2000
+		observeResource oprobot msgid info
+	 	forward incinerator -m activation_command : activation_command(start)
+	 }
+	 Goto wait_message
+	 
+	 State wait_message{
+	 	println("WIS: waiting the state update...") color green
+	 }
+	 
+	 Transition t0 whenMsg info  -> manageState //è per forza quello lavoro off (si potrebbe aggiungere stato di errore)
+	  													//quindi il robot sta aspettando il segnale
+	State manageState{
+		//per ora polling mock
+		onMsg( info :  info(X,Y) ){
+				[# RobPos = payloadArg(1)  #]		
+		}
+		//to_DO: UPDATE RESOURCES PER MONITOR (prossimi sprint)
+		
+		[#
+		 RP_w = (0..5).random()            
+         Ash_distance = (10..50).random()
+        #]
+        
+        
+        [#
+         if(RP_w>0 && Ash_distance > Ash_limit ){
+         #]
+         println(" WIS: invio messaggio start") color magenta
+         println(" WIS: controllo: condizioni corrette e start") color magenta
+         forward oprobot -m startRobot : startRobot( start )
+        	
+      [#
+      	rob = "working"
+      	}
+   
+      #]
+      
+      	//to-DO: EVENTUALE UPDATE RESOURCE ALL' INTERFACCIA
+ 	              	
+	
+ 	}
+ 	
+ 	  Goto idle if [# rob === "working" #] else polling
+
+    	State polling{}
+    	Transition t1 
+    	whenTime 2000 -> manageState
+    	
+    	
+    	State idle{
+    		println("WIS: waiting for updates...") color green
+    	}
+
+		
+		Transition t2 whenMsg info  -> managePosition
+		
+		
+		State managePosition{
+			println("WIS: changing the position...") color green
+			onMsg( info :  info(X,Y) ){
+				[# val Y = payloadArg(1)  #]
+				println("WIS: robPosition -> $Y") color magenta
+				//to-DO : UPDATE RESOURCE PER IL MONITOR
+				[# RobPos = "$Y"
+				if(Y.equals("BURNIN")){	
+				#]
+					println("WIS: incinerator BURN") color red
+					forward incinerator -m startBurn : startBurn(start)
+				[#
+				}
+				#]
+				
+			}
+		}
+		
+		 Goto wait_message if [# RobPos.equals("ASHOUT") #] else idle
+		
+
+
+}
+
+
+QActor incinerator context ctxsprintuno{
+	[#
+        val BTIME = 4000L;
+        var start = "off";
+	#]
+	
+	State s0 initial{
+		println("incinerator ready...") color yellow
+		delay 1000
+	}
+	
+	Transition t0
+		whenMsg activation_command -> start
+		
+	
+	State start{
+		println("the incinerator has started...") color green
+		[# start ="on"; #]
+	}
+	
+	Transition t1
+		whenMsg startBurn -> handleBurn
+		
+	State handleBurn{
+		println("the incinerator is burning...") color red
+		delay 15000
+		emit burnEnd : burnEnd(finish)
+		
+		
+	}
+	
+	Transition t2
+		whenMsg startBurn -> handleBurn
+		
+}
+
+
+
+QActor oprobot context ctxsprintuno{
+	
+	[#
+		var Position = ""
+		var State = ""
+	#]
+	
+	State s0 initial{
+		println("opRobot ready...") color yellow
+		delay 300
+		
+	}
+	Goto invio
+	
+	State invio{
+		request basicrobot -m engage : engage($MyName, 330)
+		printCurrentMessage color blue
+		println("opRobot manda request")
+	}
+	
+	Transition t0 whenReply engagedone   -> home				
+ 	              whenReply engagerefused -> error
+ 	              
+ 	State home{
+ 		printCurrentMessage color blue
+ 		println("opRobot in HOME...") color red
+ 		[# Position = "HOME" #]
+ 		delay 5000
+ 		[# State = "idle" #]
+ 		updateResource [# "info($State, $Position)" #] 
+ 		
+ 	}
+ 	
+ 	Transition t1 whenMsg startRobot -> handleRP
+ 	
+ 	
+ 	State handleRP{
+ 		println("opRobot to RP...") color blue
+ 		[# State = "work" #]
+ 		updateResource [# "info($State, $Position)" #] 
+ 		request basicrobot -m moverobot : moverobot (0,4) //pos wateIN
+ 		
+ 	}
+ 	
+ 	Transition t2 whenReply moverobotdone   -> handleBurnIn			
+ 	              whenReply moverobotfailed -> error
+ 	              
+ 	              
+ 	State handleBurnIn{
+ 		println("opRobot in wateIn going to burnIn...") color yellow
+ 		[# Position = "WASTEIN" #]
+ 		delay 2000 //pick up time
+ 		updateResource [# "info($State, $Position)" #] 
+ 		request basicrobot -m moverobot : moverobot (3,1) //pos burnIn
+ 		
+ 		
+ 	} 
+ 	
+ 	
+ 	Transition t3 whenReply moverobotdone   -> handleHome2		
+ 	              whenReply moverobotfailed -> error
+ 	              
+ 	              
+ 	 State handleHome2{
+ 	 	println("opRobot in burIn going to HOME...") color yellow
+ 		[# Position = "BURNIN" #]
+ 		delay 2000 //deposit time
+ 		updateResource [# "info($State, $Position)" #] 
+ 		request basicrobot -m moverobot : moverobot (0,0) //HOME
+ 	 }
+ 	 
+ 	 
+ 	 Transition t4 whenReply moverobotdone   -> home2	
+ 	              	whenReply moverobotfailed -> error
+ 	              	
+ 	              	
+ 	  State home2{
+ 	  	println("opRobot HOME waiting for the incinerator to stop...") color yellow
+ 	  	[# Position = "HOME" #]
+ 		updateResource [# "info($State, $Position)" #] 
+ 	  	
+ 	  }
+ 	  
+ 	  
+ 	  Transition t5 whenEvent burnEnd -> handleBurnOut
+ 	  
+ 	  
+ 	  State handleBurnOut{
+ 	  	println("opRobot in HOME going to gathering ashes...") color yellow
+ 		request basicrobot -m moverobot : moverobot (5,3) // burnOUT
+ 	  }
+ 	  
+ 	  Transition t6 whenReply moverobotdone   -> handleBurnOutGo	
+ 	              	whenReply moverobotfailed -> error
+ 	              	
+ 	              	
+ 	  
+ 	   State handleBurnOutGo{
+ 	 	println("opRobot in BurnOUT going to AshOUT...") color yellow
+ 		[# Position = "BURNOUT" #]
+ 		delay 2000 //gathering time
+ 		updateResource [# "info($State, $Position)" #] 
+ 		request basicrobot -m moverobot : moverobot (6,4) //AshOUT
+ 	 }
+ 	 
+ 	 
+ 	  Transition t7 whenReply moverobotdone   -> handleAshOut	
+ 	              	whenReply moverobotfailed -> error
+ 	              	
+ 	              	
+ 	  State handleAshOut{
+ 	  	println("opRobot in AshOUT going to HOME...") color yellow
+ 	  	println("RESTARTING THE ROUTINE...") color red
+ 		[# Position = "ASHOUT" #]
+ 		delay 2000 //deposit time
+ 		updateResource [# "info($State, $Position)" #] 
+ 		request basicrobot -m moverobot : moverobot (0,0) //HOME
+ 	  }
+ 	  
+ 	  
+ 	  Transition t7 whenReply moverobotdone   -> home	
+ 	              	whenReply moverobotfailed -> error
+ 	 
+ 	  
+ 	              	
+ 	              	
+ 	       
+ 	              	
+  	State error{
+ 		println("ERROR...") color red
+ 		[#System.exit(-1)#]
+ 	}
+}
+
+
+
+
+

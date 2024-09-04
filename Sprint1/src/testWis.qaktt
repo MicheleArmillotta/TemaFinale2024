@@ -1,0 +1,228 @@
+System testwis
+
+
+//WIS e opRobot
+Dispatch startRobot : startRobot(X)
+Dispatch startBurn : startBurn(X)
+
+//updateResources
+//Dispatch updatePosition : updatePosition(X)
+Dispatch info : info(X, Y)
+Dispatch infotest : infotest(X, Y)
+
+//tests
+Request burn_test : burn_test(N)
+Reply burn_reply : burn_reply(X) for burn_test
+
+Request start_test : start_test(N)
+Reply start_reply : start_reply(N) for start_test
+
+Context ctxtestwis ip [host="localhost" port=8080]
+
+
+
+QActor wis context ctxtestwis{
+	[#
+		var RobPos = ""
+		var RP_w = 0
+		var Ash_distance = 0
+		var Inc_stat = "off"
+		val Ash_limit = 10  //qualche misura
+		var rob = "idle" 
+		
+	#]
+	
+	State s0 initial{
+		println("WIS: wis starting...") color green
+		delay 1000
+		observeResource wisobserver msgid info //cambiato a fini di test
+	 	//forward incinerator -m activation_command : activation_command(start)
+	 }
+	 Goto wait_message
+	 
+	 State wait_message{
+	 	println("WIS: waiting the state update...") color green
+	 }
+	 
+	 Transition t0 whenMsg info  -> manageState //è per forza quello lavoro off (si potrebbe aggiungere stato di errore)
+	  													//quindi il robot sta aspettando il segnale
+	State manageState{
+		//per ora polling mock
+		onMsg( info :  info(X,Y) ){
+				[# RobPos = payloadArg(1)  #]		
+		}
+		//to_DO: UPDATE RESOURCES PER MONITOR (prossimi sprint)
+		
+		[#
+		 RP_w = (0..5).random()            
+         Ash_distance = (10..50).random()
+        #]
+        
+        
+        [#
+         if(RP_w>0 && Ash_distance > Ash_limit ){
+         #]
+         println(" WIS: invio messaggio start") color green
+         println(" WIS: controllo: condizioni corrette e start") color green
+         forward wisobserver -m startRobot : startRobot( start ) //cambiato a fini di test
+         delay 2000
+         updateResource [# "infotest($RP_w, $Ash_distance)" #] 
+        	
+      [#
+      	rob = "working"
+      	}
+   
+      #]
+      
+      	//to-DO: EVENTUALE UPDATE RESOURCE ALL' INTERFACCIA
+ 	              	
+	
+ 	}
+ 	
+ 	  Goto idle if [# rob === "working" #] else polling
+
+    	State polling{}
+    	Transition t1 
+    	whenTime 2000 -> manageState
+    	
+    	
+    	State idle{
+    		println("WIS: waiting for updates...") color green
+    	}
+
+		
+		Transition t2 whenMsg info  -> managePosition
+		
+		
+		State managePosition{
+			println("WIS: changing the position...") color green
+			onMsg( info :  info(X,Y) ){
+				[# val Y = payloadArg(1)  #]
+				println("WIS: robPosition -> $Y") color green
+				//to-DO : UPDATE RESOURCE PER IL MONITOR
+				[# RobPos = "$Y"
+				if(Y.equals("BURNIN")){	
+				#]
+					println("WIS: incinerator BURN") color green
+					forward wisobserver -m startBurn : startBurn(start) //cambiato a fini di test
+					
+				[#
+				}
+				#]
+				
+			}
+		}
+		
+		 Goto wait_message if [# RobPos.equals("ASHOUT") #] else idle
+		
+
+
+}
+
+QActor wisobserver context ctxtestwis{
+	[# val State = "idle"
+	   var Position = "HOME"
+	   var RP_string = ""
+	   var Ash_string = ""	 
+	   var RP_w = 0
+	   var Ash_distance = 0	
+	#]
+	
+	State s0 initial{
+		println("WISobs: observerStarting...") color red
+		observeResource wis msgid infotest
+		delay 2000 
+	 }
+	 
+	 Goto idle
+	
+	State idle{
+		println("Wisobs idle...") color red
+	}
+	
+	Transition t1
+		whenRequest start_test -> handleStart
+		whenRequest burn_test -> handleBurn
+		
+		
+	State handleStart{
+		updateResource [# "info($State, $Position)" #]
+		println("Wisobs: Robot free sended...") color red
+	}
+	
+	Transition t2
+		whenMsg startRobot -> handleStartRobot
+		
+	State handleStartRobot{
+		println("Wisobs: startRobot!! waitin for the checks...") color red
+	}
+	
+	
+	Transition t3
+		whenMsg infotest -> handleStartTest
+		
+	State handleStartTest{
+		onMsg( infotest :  infotest(X,Y) ){
+				[# RP_string = payloadArg(0)  
+				   Ash_string = payloadArg(1)
+				   RP_w = RP_string.toInt()
+					Ash_distance = Ash_string.toInt()
+				   Position = "ASHOUT"	
+				#]		
+		}
+		updateResource [# "info($State, $Position)" #] //riporto il wis allo stato iniziale
+		delay 1000
+		[#
+			if(RP_w > 0 && Ash_distance > 10){
+		#]
+			replyTo start_test with start_reply : start_reply(ok)
+		[#
+		}else{
+		#]
+			replyTo start_test with start_reply : start_reply(notok)
+		[#
+		}
+		#]
+	}
+	
+	Goto idle
+	
+	
+	
+	
+	State handleBurn{
+		updateResource [# "info($State, $Position)" #]
+		println("Wisobs: Robot free sended (HANDLEBURN)...") color red
+	}
+	
+	Transition t4
+		whenMsg startRobot -> handleBurnRobot
+		
+	State handleBurnRobot{
+		println("Wisobs: startRobot!! waitin for the checks...") color red
+	}
+	
+	
+	Transition t5
+		whenMsg infotest -> handleBurnTest
+		
+	State handleBurnTest{
+		[# Position = "BURNIN" #]
+		updateResource [# "info($State, $Position)" #] //triggero il brun
+		println("Wisobs: triggering burnIn...") color red
+	}
+	
+	Transition t5
+		whenMsg startBurn -> handleBurning
+	
+	State handleBurning{
+		println("Wisobs: endTest burnIn...") color red
+		[# Position = "ASHOUT" #]
+		updateResource [# "info($State, $Position)" #] //ritorno alla posizione iniziale del wis
+		delay 1000
+		replyTo burn_test with burn_reply : burn_reply(ok)
+	}
+	Goto idle
+	 
+	 
+}
