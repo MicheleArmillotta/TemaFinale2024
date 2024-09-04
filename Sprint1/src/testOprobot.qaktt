@@ -143,7 +143,7 @@ QActor oprobot context ctxtestop{
  	  	println("opRobot in AshOUT going to HOME...") color yellow
  	  	println("RESTARTING THE ROUTINE...") color red
  		[# Position = "ASHOUT" #]
- 		[# State = "idle" #]
+ 		[# State = "working" #]
  		delay 2000 //deposit time
  		updateResource [# "info($State, $Position)" #] 
  		//request basicrobot -m moverobot : moverobot (0,0) //HOME
@@ -209,7 +209,7 @@ QActor test_observer context ctxtestop{
 			[#  State = payloadArg(0)#]
     	    [# Position = payloadArg(1)#]
     	
-   		[# if(State.equals("idle") && (Position.equals("ASHOUT"))){ 
+   		[# if(State.equals("working") && (Position.equals("ASHOUT"))){ 
    			 var RISPOSTA  = "$State,$Position" #]
    			     	replyTo start_test with start_test_reply : start_test_reply($RISPOSTA)
    			[# }else{} #]

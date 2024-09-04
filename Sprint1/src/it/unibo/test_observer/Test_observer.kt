@@ -75,7 +75,7 @@ class Test_observer ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								  State = payloadArg(0) 
 								 Position = payloadArg(1) 
-								 if(State.equals("idle") && (Position.equals("ASHOUT"))){ 
+								 if(State.equals("working") && (Position.equals("ASHOUT"))){ 
 								   			 var RISPOSTA  = "$State,$Position"  
 								answer("start_test", "start_test_reply", "start_test_reply($RISPOSTA)"   )  
 								 }else{}  

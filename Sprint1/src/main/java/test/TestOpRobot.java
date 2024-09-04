@@ -55,7 +55,7 @@ public class TestOpRobot {
 			public void run(){
 				try {
 					CommUtils.outmagenta("TestMDCtx activateSystemUsingGradle ");
-					Process gradleProcess = Runtime.getRuntime().exec("./gradlew run");
+					Process gradleProcess = Runtime.getRuntime().exec("./gradlew.bat run");
 					showOutput(gradleProcess,ColorsOut.BLACK);
 				} catch ( Exception e) {
 					CommUtils.outred("TestMDCtx activate ERROR " + e.getMessage());
@@ -68,7 +68,7 @@ public class TestOpRobot {
 	public static void stopGradleProcess() {
 		 try {
 	            CommUtils.outmagenta("Stopping Gradle daemons...");
-	            Process stopProcess = Runtime.getRuntime().exec("./gradlew --stop");
+	            Process stopProcess = Runtime.getRuntime().exec("./gradlew.bat --stop");
 	            showOutput(stopProcess, ColorsOut.BLACK);
 	            int exitCode = stopProcess.waitFor();
 	            if (exitCode == 0) {
@@ -122,7 +122,7 @@ public class TestOpRobot {
 			CommUtils.outcyan("State payload: " + s[0] + ", Position payload: " + s[1]);
 
 
-			assertEquals(s[0], "idle");
+			assertEquals(s[0], "working");
 			assertEquals(s[1], "ASHOUT");
 			
 			CommUtils.outcyan("Test ok");
