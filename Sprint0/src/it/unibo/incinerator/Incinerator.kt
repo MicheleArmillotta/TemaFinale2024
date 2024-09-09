@@ -17,45 +17,38 @@ import it.unibo.kactor.sysUtil.createActor   //Sept2023
 class Incinerator ( name: String, scope: CoroutineScope, isconfined: Boolean=false  ) : ActorBasicFsm( name, scope, confined=isconfined ){
 
 	override fun getInitialState() : String{
-		return "state_init"
+		return "s0"
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		//val interruptedStateTransitions = mutableListOf<Transition>()
 		return { //this:ActionBasciFsm
-				state("state_init") { //this:State
+				state("s0") { //this:State
 					action { //it:State
-						CommUtils.outblack("starting the incinerator")
+						CommUtils.outyellow("incinerator ready...")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="state_idle", cond=doswitch() )
+					 transition(edgeName="t02",targetState="acceso",cond=whenEvent("start"))
 				}	 
-				state("state_idle") { //this:State
+				state("acceso") { //this:State
 					action { //it:State
-						CommUtils.outblack("[incinerator] Idle...")
+						CommUtils.outred("incinerator up...")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t018",targetState="state_burn",cond=whenDispatch("burn"))
 				}	 
-				state("state_burn") { //this:State
+				state("start") { //this:State
 					action { //it:State
-						CommUtils.outblack("[incinerator] Burning...")
-						forward("ledOn", "ledOn("_")" ,"warningdevice" ) 
-						forward("updategui", "updategui("TODO")" ,"incineratorservicestatusgui" ) 
-						delay(10000) 
-						emit("signal", "signal("")" ) 
-						forward("updategui", "updategui("TODO")" ,"incineratorservicestatusgui" ) 
+						emit("endBurn", "burnEnd(stop)" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="state_idle", cond=doswitch() )
 				}	 
 			}
 		}

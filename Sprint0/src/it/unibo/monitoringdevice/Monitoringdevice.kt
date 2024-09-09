@@ -17,80 +17,30 @@ import it.unibo.kactor.sysUtil.createActor   //Sept2023
 class Monitoringdevice ( name: String, scope: CoroutineScope, isconfined: Boolean=false  ) : ActorBasicFsm( name, scope, confined=isconfined ){
 
 	override fun getInitialState() : String{
-		return "state_init"
+		return "s0"
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		//val interruptedStateTransitions = mutableListOf<Transition>()
-		 	
-		    var Distance = 0
-		    var full = 0
-		    var DLIMT = 3
-		    var MAXD = 20
+		 val d = utils.Sonar.create()
+		
+					var led = 0;
 		return { //this:ActionBasciFsm
-				state("state_init") { //this:State
+				state("s0") { //this:State
 					action { //it:State
-						CommUtils.outblack("starting the monitoring device (AshStorage)")
+						CommUtils.outgreen("monitoring device start...")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="state_idle", cond=doswitch() )
 				}	 
-				state("state_idle") { //this:State
+				state("manageLed") { //this:State
 					action { //it:State
-						CommUtils.outblack("[ashstorage] Idle...")
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-				 	 		stateTimer = TimerActor("timer_state_idle", 
-				 	 					  scope, context!!, "local_tout_"+name+"_state_idle", 5000.toLong() )  //OCT2023
-					}	 	 
-					 transition(edgeName="t019",targetState="readsonardata",cond=whenTimeout("local_tout_"+name+"_state_idle"))   
-					transition(edgeName="t020",targetState="check_ash",cond=whenRequest("full"))
-				}	 
-				state("readsonardata") { //this:State
-					action { //it:State
-						if(  Distance <= DLIMT  
-						 ){ full = 1  
-						forward("ledBlink", "ledBlink("_")" ,"warningdevice" ) 
-						}
-						if(  Distance == MAXD  
-						 ){forward("ledBlink", "ledBlink("_")" ,"warningdevice" ) 
-						if(  full == 1  
-						 ){ full = 0  
-						forward("removed", "removed("0")" ,"waste_incinerator" ) 
-						}
-						}
-						else
-						 {if(  full == 1  
-						  ){ full = 0  
-						 forward("removed", "removed("0")" ,"waste_incinerator" ) 
-						 }
-						 }
-						forward("updategui", "updategui("TODO")" ,"incineratorservicestatusgui" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="state_idle", cond=doswitch() )
-				}	 
-				state("check_ash") { //this:State
-					action { //it:State
-						if(  Distance <= DLIMT  
-						 ){answer("full", "fullYes", "fullYes("$Distance")"   )  
-						}
-						else
-						 {answer("full", "fullNo", "fullNo("$Distance")"   )  
-						 }
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="state_idle", cond=doswitch() )
 				}	 
 			}
 		}

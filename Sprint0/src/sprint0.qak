@@ -7,7 +7,10 @@ Event endBurn: endBurn(x)
 
 Context ctxservicearea  ip [host="localhost" port=8001] 
 Context ctxmonitoringdevice  ip [host="localhost" port=8002]
-Context ctxservicegui  ip [host="localhost" port=8003]  
+Context ctxservicegui  ip [host="localhost" port=8003]
+Context ctxbasicrobot ip [host="127.0.0.1"  port=8020]
+
+ExternalQActor basicrobot context ctxbasicrobot  
 
 //SERVICE AREA CONTEXT
 
