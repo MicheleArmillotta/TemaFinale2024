@@ -166,7 +166,7 @@ QActor oprobot context ctxtestop{
 
 
 
-QActor test_observer context ctxtestop{
+QActor test_observer2 context ctxtestop{
 
 	[#
 		var Position = ""

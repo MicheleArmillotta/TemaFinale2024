@@ -19,7 +19,7 @@ context(ctxbasicrobot, "127.0.0.1",  "TCP", "8020").
  qactor( basicrobot, ctxbasicrobot, "external").
   qactor( oprobot, ctxtestop, "it.unibo.oprobot.Oprobot").
  static(oprobot).
-  qactor( test_observer, ctxtestop, "it.unibo.test_observer.Test_observer").
- static(test_observer).
+  qactor( test_observer2, ctxtestop, "it.unibo.test_observer2.Test_observer2").
+ static(test_observer2).
   qactor( incinerator, ctxtestop, "it.unibo.incinerator.Incinerator").
  static(incinerator).

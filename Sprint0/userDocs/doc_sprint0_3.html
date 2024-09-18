@@ -324,6 +324,7 @@
 						<li> Muove il robot fisico e virtuale</li>
 						<li> Descrizione fornita:
                             <a	href="./BasicRobot24.html">basicRobot24</a><br></li>
+						<li> Viene modellato come un "EXTERNAL ACTOR"</li>
 					</ul>
 				</li>
                 <br>
@@ -427,9 +428,14 @@
         <U>Aspettativa:</U>
         <li>Il robot non si muove e il led lampeggia</li>
     
+		<strong>Test Case 3</strong><br>
+        <U> Si controlla il corretto funzionamento del sistema solo tramite WASTESTORAGE e ASH STORAGE:</U>
+		
+			<li>Viene caricato un RP in WASTESTORAGE (e ASHSTORAGE vuoto), dopo TOT tempo, ASH STORAGE aumenta</li>
+			<li>Viene caricato un RP in WASTESTORAGE (e ASHSTORAGE gia' pieno), l'OpRobot non inzia il ciclo, e l'RP non viene prelevato fino a che non viene svuotato l'ASH STORAGE</li>
     <br>
     <h3>Sviluppi Futuri:</h3>
-    <p><strong>SPRINT1:</strong> Analisi del problema per i componenti WIS, OpRobot e Incinerator; e sviluppo dei relativi test</p>
+    <p><strong>SPRINT1:</strong> Analisi del problema per i componenti WIS, OpRobot e Incinerator</p>
 
 	<!-- USEFUL
 <table style="width:100%" border="1">

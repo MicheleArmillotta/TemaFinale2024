@@ -97,8 +97,8 @@ public class TestOpRobot {
 	
 	@Test
 	public void test() {
-		IApplMessage start = CommUtils.buildRequest("tester", "start_test", "start_test(X)", "test_observer");
-		IApplMessage fine = CommUtils.buildRequest("tester", "fine_test", "fine_test(X)", "test_observer");
+		IApplMessage start = CommUtils.buildRequest("tester", "start_test", "start_test(X)", "test_observer2");
+		IApplMessage fine = CommUtils.buildRequest("tester", "fine_test", "fine_test(X)", "test_observer2");
 
 		try {
 			CommUtils.outmagenta("test_observer ======================================= ");

@@ -52,6 +52,24 @@ class Wis ( name: String, scope: CoroutineScope, isconfined: Boolean=false  ) : 
 					sysaction { //it:State
 					}	 	 
 					 transition(edgeName="t00",targetState="manageState",cond=whenDispatch("info"))
+					transition(edgeName="t01",targetState="update",cond=whenDispatch("update"))
+					transition(edgeName="t02",targetState="update2",cond=whenDispatch("update2"))
+				}	 
+				state("update") { //this:State
+					action { //it:State
+						CommUtils.outgreen("WIS: aggiorno stato di WasteStorage")
+						if( checkMsgContent( Term.createTerm("update(N)"), Term.createTerm("update(N)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 RP_w = RP_w + payloadArg(0).toInt()  
+						}
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t03",targetState="manageState",cond=whenDispatch("info"))
+					transition(edgeName="t04",targetState="update",cond=whenDispatch("update"))
+					transition(edgeName="t05",targetState="update2",cond=whenDispatch("update2"))
 				}	 
 				state("manageState") { //this:State
 					action { //it:State
@@ -60,7 +78,7 @@ class Wis ( name: String, scope: CoroutineScope, isconfined: Boolean=false  ) : 
 								 RobPos = payloadArg(1)   
 						}
 						
-								 RP_w = (0..5).random()            
+								           
 						         Ash_distance = (10..50).random()
 						
 						         if(RP_w>0 && Ash_distance > Ash_limit ){
@@ -68,6 +86,7 @@ class Wis ( name: String, scope: CoroutineScope, isconfined: Boolean=false  ) : 
 						CommUtils.outmagenta(" WIS: controllo: condizioni corrette e start")
 						forward("startRobot", "startRobot(start)" ,"oprobot" ) 
 						
+						      	RP_w = RP_w - 1
 						      	rob = "working"
 						      	}
 						   
@@ -90,7 +109,7 @@ class Wis ( name: String, scope: CoroutineScope, isconfined: Boolean=false  ) : 
 				 	 		stateTimer = TimerActor("timer_polling", 
 				 	 					  scope, context!!, "local_tout_"+name+"_polling", 2000.toLong() )  //OCT2023
 					}	 	 
-					 transition(edgeName="t11",targetState="manageState",cond=whenTimeout("local_tout_"+name+"_polling"))   
+					 transition(edgeName="t16",targetState="manageState",cond=whenTimeout("local_tout_"+name+"_polling"))   
 				}	 
 				state("idle") { //this:State
 					action { //it:State
@@ -100,7 +119,22 @@ class Wis ( name: String, scope: CoroutineScope, isconfined: Boolean=false  ) : 
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t22",targetState="managePosition",cond=whenDispatch("info"))
+					 transition(edgeName="t27",targetState="managePosition",cond=whenDispatch("info"))
+					transition(edgeName="t28",targetState="update",cond=whenDispatch("update"))
+					transition(edgeName="t29",targetState="update2",cond=whenDispatch("update2"))
+				}	 
+				state("update2") { //this:State
+					action { //it:State
+						CommUtils.outgreen("WIS: aggiorno stato di AshStorage")
+						if( checkMsgContent( Term.createTerm("update2(N)"), Term.createTerm("update2(N)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 Ash_distance = payloadArg(0).toInt()  
+						}
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 				}	 
 				state("managePosition") { //this:State
 					action { //it:State

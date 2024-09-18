@@ -18,7 +18,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
     
     //Per poter usare javafx
-    id 'org.openjfx.javafxplugin' version '0.1.0'
+   // id 'org.openjfx.javafxplugin' version '0.1.0'
 }
 
 version '1.0'
@@ -39,10 +39,10 @@ repositories {
     flatDir {   dirs '../unibolibs'	 }
 }
 
-javafx {
-    version = "11"
-    modules =  ["javafx.controls", "javafx.fxml", "javafx.web", "javafx.graphics"]
-}
+//javafx {
+  //  version = "11"
+    //modules =  ["javafx.controls", "javafx.fxml", "javafx.web", "javafx.graphics"]
+//}
 
 dependencies {
     // Align versions of all Kotlin components
@@ -147,7 +147,7 @@ eclipse {
 
 application {
     //Define the main class for the application.
-    mainClassName    = 'it.unibo.ctxsprintuno.MainCtxsprintunoKt'
+    mainClassName    = 'it.unibo.ctxtestwis.MainCtxtestwisKt'
 }
  
  jar {
@@ -170,9 +170,9 @@ task dovesiamo {
 
 distributions {
     main {
-        distributionBaseName = 'sprintuno'
+        distributionBaseName = 'testwis'
         contents { 
-             from './sprintuno.pl'
+             from './testwis.pl'
              from './sysRules.pl'
              from './facadeConfig.json'
         }
@@ -183,7 +183,7 @@ task run0(type: JavaExec) {
     group = "Execution"
     description = "Run the main class with JavaExecTask"
     classpath = sourceSets.main.runtimeClasspath
-    main = 'it.unibo.ctxsprintuno.MainCtxsprintunoKt'
+    main = 'it.unibo.ctxtestwis.MainCtxtestwisKt'
 }
 
 /*

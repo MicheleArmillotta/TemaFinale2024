@@ -13,24 +13,32 @@ Request moverobot    :  moverobot(TARGETX, TARGETY)
 Reply moverobotdone  :  moverobotok(ARG)
 Reply moverobotfailed:  moverobotfailed(PLANDONE, PLANTODO)
 //updateResources
-//Dispatch updatePosition : updatePosition(X)
+//Test messages
 Dispatch info : info(X, Y)
-// Da waste storage a WIS
+Dispatch nuovo : nuovo(X, Y)
+Request start_test : start_test(X)
+Reply start_test_reply : start_test_reply(X) for start_test
+
+// Da waste storage/ash storage a WIS
 Dispatch add:add(N)
 Dispatch update : update(N)
 Dispatch add2:add2(N)
 Dispatch update2:update2(N)
 
-Context ctxsprintuno ip [host="localhost" port=8080]
+// per test
+Dispatch waste : waste(N)
+Dispatch ash : ash(N)
+
+Context ctxtest ip [host="localhost" port=10014]
 Context ctxbasicrobot ip [host="127.0.0.1"  port=8020]
 
 ExternalQActor basicrobot context ctxbasicrobot
 
-QActor wis context ctxsprintuno{
+QActor wis context ctxtest{
 	[#
 		var RobPos = ""
 		var RP_w = 0
-		var Ash_distance = 0
+		var Ash_distance = 0  // settata a 0 per i tst
 		var Inc_stat = "off"
 		val Ash_limit = 10  //qualche misura
 		var rob = "idle" 
@@ -39,7 +47,7 @@ QActor wis context ctxsprintuno{
 	
 	State s0 initial{
 		println("WIS: wis starting...") color red
-		delay 2000
+		delay 1000
 		observeResource oprobot msgid info
 	 	forward incinerator -m activation_command : activation_command(start)
 	 }
@@ -51,16 +59,19 @@ QActor wis context ctxsprintuno{
 	 
 	 Transition t0 whenMsg info  -> manageState //è per forza quello lavoro off (si potrebbe aggiungere stato di errore)
 	  			   whenMsg update -> update      //quindi il robot sta aspettando il segnale
-	  			   whenMsg update2 -> update2
+	  			   
 	State update{
 		println("WIS: aggiorno stato di WasteStorage") color green
 		onMsg( update : update(N)){
 			[# RP_w = RP_w + payloadArg(0).toInt() #]
+			updateResource [# "nuovo($RP_w, $Ash_distance)" #]
+			
 		}
+		println("WIS: $RP_w, $Ash_distance") color red
+		
 	}		
-	Transition t0 whenMsg info  -> manageState //è per forza quello lavoro off (si potrebbe aggiungere stato di errore)
-	  			   whenMsg update -> update      //quindi il robot sta aspettando il segnale
-	  			   whenMsg update2 -> update2
+	
+	Transition t0 whenMsg info  -> manageState
 								
 	State manageState{
 		//per ora polling mock
@@ -69,14 +80,14 @@ QActor wis context ctxsprintuno{
 		}
 		//to_DO: UPDATE RESOURCES PER MONITOR (prossimi sprint)
 		// RP_w = (0..5).random() 
-		[#
-		           
-         Ash_distance = (10..50).random()
-        #]
+//		[#
+//		           
+//         Ash_distance = (10..50).random()
+//        #]
         
         
         [#
-         if(RP_w>0 && Ash_distance > Ash_limit ){
+         if(RP_w>0 && Ash_distance < Ash_limit ){
          #]
          println(" WIS: invio messaggio start") color magenta
          println(" WIS: controllo: condizioni corrette e start") color magenta
@@ -90,9 +101,7 @@ QActor wis context ctxsprintuno{
    
       #]
      
-      
-      	//to-DO: EVENTUALE UPDATE RESOURCE ALL' INTERFACCIA
- 	              	
+      	println("WIS: $RP_w, $Ash_distance") color magenta      	
 	
  	}
  	
@@ -110,16 +119,23 @@ QActor wis context ctxsprintuno{
 		
 		
 		Transition t2 whenMsg info  -> managePosition
-					whenMsg update -> update
 					whenMsg update2 -> update2
-				
-		 State update2{
+					
+		State update2{
 			println("WIS: aggiorno stato di AshStorage") color green
 			onMsg( update2 : update2(N)){
 				[# Ash_distance = payloadArg(0).toInt() #]
+				updateResource [# "nuovo($RP_w, $Ash_distance)" #]
+				
 			}
-		}	
+			
+			println("WIS: $RP_w, $Ash_distance") color blue
+			
+		}
 		
+		Transition t2 whenMsg info  -> managePosition
+					whenMsg update2 -> update2
+					
 		State managePosition{
 			println("WIS: changing the position...") color green
 			onMsg( info :  info(X,Y) ){
@@ -137,15 +153,20 @@ QActor wis context ctxsprintuno{
 				
 			}
 		}
+		Goto wait_message if [# RobPos.equals("ASHOUT") #] else idle
 		
-		 Goto wait_message if [# RobPos.equals("ASHOUT") #] else idle
+		State idle{}
+	
+		Transition t2 whenMsg update2 -> update2
+					
+		
 		
 
 
 }
 
 
-QActor incinerator context ctxsprintuno{
+QActor incinerator context ctxtest{
 	[#
         val BTIME = 4000L;
         var start = "off";
@@ -183,7 +204,7 @@ QActor incinerator context ctxsprintuno{
 
 
 
-QActor oprobot context ctxsprintuno{
+QActor oprobot context ctxtest{
 	
 	[#
 		var Position = ""
@@ -198,6 +219,7 @@ QActor oprobot context ctxsprintuno{
 	Goto invio
 	
 	State invio{
+		delay 2000
 		request basicrobot -m engage : engage($MyName, 330)
 		printCurrentMessage color blue
 		println("opRobot manda request")
@@ -210,7 +232,7 @@ QActor oprobot context ctxsprintuno{
  		printCurrentMessage color blue
  		println("opRobot in HOME...") color red
  		[# Position = "HOME" #]
- 		delay 5000
+ 		delay 1000
  		[# State = "idle" #]
  		updateResource [# "info($State, $Position)" #] 
  		
@@ -222,7 +244,7 @@ QActor oprobot context ctxsprintuno{
  	State handleRP{
  		println("opRobot to RP...") color blue
  		[# State = "work" #]
- 		updateResource [# "info($State, $Position)" #] 
+ 		//updateResource [# "info($State, $Position)" #] 
  		request basicrobot -m moverobot : moverobot (0,4) //pos wateIN
  		
  	}
@@ -294,13 +316,14 @@ QActor oprobot context ctxsprintuno{
  	              	
  	              	
  	  State handleAshOut{
+ 	  	forward ashstorage -m add2 : add2(1)
  	  	println("opRobot in AshOUT going to HOME...") color yellow
  	  	println("RESTARTING THE ROUTINE...") color red
  		[# Position = "ASHOUT" #]
  		delay 2000 //deposit time
  		updateResource [# "info($State, $Position)" #] 
  		request basicrobot -m moverobot : moverobot (0,0) //HOME
- 		forward ashstorage -m add2 : add2(1)
+ 		
  		
  	  }
  	  
@@ -319,14 +342,14 @@ QActor oprobot context ctxsprintuno{
  	}
 }
 
-QActor wastestorage context ctxsprintuno {
+QActor wastestorage context ctxtest {
     [#
         var WasteLimit = 5;   // Numero per test RANDOM
     #]
 
     State s0 initial {
         println("WasteStorage Mock ready...") color green
-        delay 1000
+        delay 300
     }
 	
 	Transition t0 whenMsg add -> incrementa
@@ -342,26 +365,27 @@ QActor wastestorage context ctxsprintuno {
 	}
 }
 
-QActor esterno context ctxsprintuno{
+QActor esterno context ctxtest{
 	
 	State s0 initial{
 		println("Agente che carica gli RP ready...") color green
-		delay 1000
+		delay 300
 		[# val K = (1..3).random(); #]
 		forward wastestorage -m add : add($K)
 	}
 	
-	Transition t0 whenTime 8000 -> s0
+	
+	//Transition t0 whenTime 100000 -> s0
 }
 
-QActor ashstorage context ctxsprintuno {
+QActor ashstorage context ctxtest {
     [#
         var AshStorage = 0;   
     #]
 
     State s0 initial {
         println("AshStorage Mock ready...") color green
-        delay 1000
+        delay 3000
     }
 	
 	Transition t0 whenMsg add2 -> incrementa
@@ -379,3 +403,62 @@ QActor ashstorage context ctxsprintuno {
 
 
 
+QActor test_observer context ctxtest{
+
+	[#
+		var WasteStorage_prec = 0
+		var AshStorage_prec = 0
+		var WasteStorage = 0
+		var AshStorage = 0
+	#]
+
+	State s0 initial{
+		println("$name ready...") color blue
+//		delay 1000
+		observeResource wis msgid nuovo
+	}
+	
+	Transition t0 whenMsg nuovo -> controllo
+	
+	State controllo{
+		printCurrentMessage color magenta
+		onMsg( nuovo : nuovo(X, Y) ){
+			[# WasteStorage_prec = payloadArg(0).toInt() #]
+			[# AshStorage_prec = payloadArg(1).toInt() #]
+			println("$name WasteStorage_prec: $WasteStorage_prec  AshStorage_prec: $AshStorage_prec") color green
+			
+		}
+	}
+
+	Transition t1 whenRequest start_test -> handleStart
+				  
+	State handleStart{
+		printCurrentMessage color green
+		//forward oprobot -m startRobot : startRobot(start)
+   		println("$name vado in attesa di nuovo aggiornamento")
+	}
+	
+	Transition t2 whenMsg nuovo -> fine
+	
+	State fine{
+		printCurrentMessage 
+		onMsg( nuovo :  nuovo(X, Y) ){
+			[#  WasteStorage = payloadArg(0).toInt() #]
+    	    [#  AshStorage = payloadArg(1).toInt() #]
+    	   
+    		
+    		println("$name $WasteStorage $WasteStorage_prec $AshStorage $AshStorage_prec")
+   		
+   		[# if((WasteStorage == WasteStorage_prec - 1) && (AshStorage == AshStorage_prec + 1)){  #]
+ 
+   			     replyTo start_test with start_test_reply : start_test_reply(ok)
+   			[# }else{ #]
+   			   	replyTo start_test with start_test_reply : start_test_reply(NO)
+   				
+   		[#	} #]
+   		}
+	}
+		
+	
+	Transition t2 whenMsg nuovo -> fine
+}

@@ -29,11 +29,18 @@ with Diagram('sprintunoArch', show=False, outformat='png', graph_attr=graphattr)
           wis=Custom('wis','./qakicons/symActorSmall.png')
           incinerator=Custom('incinerator','./qakicons/symActorSmall.png')
           oprobot=Custom('oprobot','./qakicons/symActorSmall.png')
+          wastestorage=Custom('wastestorage','./qakicons/symActorSmall.png')
+          esterno=Custom('esterno','./qakicons/symActorSmall.png')
+          ashstorage=Custom('ashstorage','./qakicons/symActorSmall.png')
      with Cluster('ctxbasicrobot', graph_attr=nodeattr):
           basicrobot=Custom('basicrobot(ext)','./qakicons/externalQActor.png')
      incinerator >> Edge( label='burnEnd', **eventedgeattr, decorate='true', fontcolor='red') >> sys
      sys >> Edge( label='burnEnd', **evattr, decorate='true', fontcolor='darkgreen') >> oprobot
      oprobot >> Edge(color='magenta', style='solid', decorate='true', label='<engage<font color="darkgreen"> engagedone engagerefused</font> &nbsp; moverobot &nbsp; >',  fontcolor='magenta') >> basicrobot
+     esterno >> Edge(color='blue', style='solid',  decorate='true', label='<add &nbsp; >',  fontcolor='blue') >> wastestorage
+     oprobot >> Edge(color='blue', style='solid',  decorate='true', label='<add2 &nbsp; >',  fontcolor='blue') >> ashstorage
+     ashstorage >> Edge(color='blue', style='solid',  decorate='true', label='<update2 &nbsp; >',  fontcolor='blue') >> wis
+     wastestorage >> Edge(color='blue', style='solid',  decorate='true', label='<update &nbsp; >',  fontcolor='blue') >> wis
      oprobot >> Edge(color='blue', style='solid',  decorate='true', label='<info &nbsp; >',  fontcolor='blue') >> wis
      wis >> Edge(color='blue', style='solid',  decorate='true', label='<activation_command &nbsp; startBurn &nbsp; >',  fontcolor='blue') >> incinerator
      wis >> Edge(color='blue', style='solid',  decorate='true', label='<startRobot &nbsp; >',  fontcolor='blue') >> oprobot

@@ -22,70 +22,72 @@ class Test_observer ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		//val interruptedStateTransitions = mutableListOf<Transition>()
 		
-				var Position = ""
-				var State = ""
+				var WasteStorage_prec = 0
+				var AshStorage_prec = 0
+				var WasteStorage = 0
+				var AshStorage = 0
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
 						CommUtils.outblue("$name ready...")
-						delay(1000) 
-						observeResource("localhost","10010","ctxtestop","oprobot","info")
+						observeResource("localhost","10014","ctxtest","wis","nuovo")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t016",targetState="controllo",cond=whenDispatch("info"))
+					 transition(edgeName="t030",targetState="controllo",cond=whenDispatch("nuovo"))
 				}	 
 				state("controllo") { //this:State
 					action { //it:State
-						CommUtils.outgreen("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
+						CommUtils.outmagenta("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
 						 	   
-						if( checkMsgContent( Term.createTerm("info(X,Y)"), Term.createTerm("info(X,Y)"), 
+						if( checkMsgContent( Term.createTerm("nuovo(X,Y)"), Term.createTerm("nuovo(X,Y)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								  State = payloadArg(0) 
-								 Position = payloadArg(1) 
+								 WasteStorage_prec = payloadArg(0).toInt()  
+								 AshStorage_prec = payloadArg(1).toInt()  
+								CommUtils.outgreen("$name WasteStorage_prec: $WasteStorage_prec  AshStorage_prec: $AshStorage_prec")
 						}
-						CommUtils.outblue("$name $State $Position")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t117",targetState="handleStart",cond=whenRequest("start_test"))
-					transition(edgeName="t118",targetState="controllo",cond=whenDispatch("info"))
+					 transition(edgeName="t131",targetState="handleStart",cond=whenRequest("start_test"))
 				}	 
 				state("handleStart") { //this:State
 					action { //it:State
-						var RISPOSTA = "$State,$Position"  
 						CommUtils.outgreen("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
 						 	   
-						CommUtils.outgreen("START: $name $State $Position")
-						forward("startRobot", "startRobot(start)" ,"oprobot" ) 
+						CommUtils.outblack("$name vado in attesa di nuovo aggiornamento")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="invio", cond=doswitch() )
+					 transition(edgeName="t232",targetState="fine",cond=whenDispatch("nuovo"))
 				}	 
-				state("invio") { //this:State
+				state("fine") { //this:State
 					action { //it:State
-						if( checkMsgContent( Term.createTerm("info(X,Y)"), Term.createTerm("info(X,Y)"), 
+						CommUtils.outcyan("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
+						 	   
+						if( checkMsgContent( Term.createTerm("nuovo(X,Y)"), Term.createTerm("nuovo(X,Y)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								  State = payloadArg(0) 
-								 Position = payloadArg(1) 
-								 if(State.equals("working") && (Position.equals("ASHOUT"))){ 
-								   			 var RISPOSTA  = "$State,$Position"  
-								answer("start_test", "start_test_reply", "start_test_reply($RISPOSTA)"   )  
-								 }else{}  
+								  WasteStorage = payloadArg(0).toInt()  
+								  AshStorage = payloadArg(1).toInt()  
+								CommUtils.outblack("$name $WasteStorage $WasteStorage_prec $AshStorage $AshStorage_prec")
+								 if((WasteStorage == WasteStorage_prec - 1) && (AshStorage == AshStorage_prec + 1)){   
+								answer("start_test", "start_test_reply", "start_test_reply(ok)"   )  
+								 }else{  
+								answer("start_test", "start_test_reply", "start_test_reply(NO)"   )  
+									}  
 						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t219",targetState="invio",cond=whenDispatch("info"))
+					 transition(edgeName="t233",targetState="fine",cond=whenDispatch("nuovo"))
 				}	 
 			}
 		}

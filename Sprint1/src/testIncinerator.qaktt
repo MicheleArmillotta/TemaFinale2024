@@ -17,7 +17,7 @@ Reply start_reply : start_reply(N) for start_test
 
 Context ctxtest ip [host="localhost" port=8080]
 
-QActor incinerator context ctxtest{
+QActor incinerator context ctxtest{ 
 	[#
         val BTIME = 4000L;
         var start = "off";

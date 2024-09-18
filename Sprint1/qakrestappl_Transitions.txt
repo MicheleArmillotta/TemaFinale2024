@@ -1,6 +1,15 @@
 {"actor":"wis", "msgType":"dispatch", "curstate":"wait_message", "nextstate":"manageState", "msgId":"info"}
+{"actor":"wis", "msgType":"dispatch", "curstate":"wait_message", "nextstate":"update", "msgId":"update"}
+{"actor":"wis", "msgType":"dispatch", "curstate":"wait_message", "nextstate":"update2", "msgId":"update2"}
+{"actor":"wis", "msgType":"dispatch", "curstate":"update", "nextstate":"manageState", "msgId":"info"}
+{"actor":"wis", "msgType":"dispatch", "curstate":"update", "nextstate":"update", "msgId":"update"}
+{"actor":"wis", "msgType":"dispatch", "curstate":"update", "nextstate":"update2", "msgId":"update2"}
 {"actor":"wis", "msgType":"dispatch", "curstate":"idle", "nextstate":"managePosition", "msgId":"info"}
+{"actor":"wis", "msgType":"dispatch", "curstate":"idle", "nextstate":"update", "msgId":"update"}
+{"actor":"wis", "msgType":"dispatch", "curstate":"idle", "nextstate":"update2", "msgId":"update2"}
 {"actor":"incinerator", "msgType":"dispatch", "curstate":"s0", "nextstate":"start", "msgId":"activation_command"}
 {"actor":"incinerator", "msgType":"dispatch", "curstate":"start", "nextstate":"handleBurn", "msgId":"startBurn"}
 {"actor":"incinerator", "msgType":"dispatch", "curstate":"handleBurn", "nextstate":"handleBurn", "msgId":"startBurn"}
 {"actor":"oprobot", "msgType":"dispatch", "curstate":"home", "nextstate":"handleRP", "msgId":"startRobot"}
+{"actor":"wastestorage", "msgType":"dispatch", "curstate":"s0", "nextstate":"incrementa", "msgId":"add"}
+{"actor":"ashstorage", "msgType":"dispatch", "curstate":"s0", "nextstate":"incrementa", "msgId":"add2"}

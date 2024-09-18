@@ -34,7 +34,7 @@ class Incinerator ( name: String, scope: CoroutineScope, isconfined: Boolean=fal
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t03",targetState="start",cond=whenDispatch("activation_command"))
+					 transition(edgeName="t010",targetState="start",cond=whenDispatch("activation_command"))
 				}	 
 				state("start") { //this:State
 					action { //it:State
@@ -45,7 +45,7 @@ class Incinerator ( name: String, scope: CoroutineScope, isconfined: Boolean=fal
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t14",targetState="handleBurn",cond=whenDispatch("startBurn"))
+					 transition(edgeName="t111",targetState="handleBurn",cond=whenDispatch("startBurn"))
 				}	 
 				state("handleBurn") { //this:State
 					action { //it:State
@@ -57,7 +57,7 @@ class Incinerator ( name: String, scope: CoroutineScope, isconfined: Boolean=fal
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t25",targetState="handleBurn",cond=whenDispatch("startBurn"))
+					 transition(edgeName="t212",targetState="handleBurn",cond=whenDispatch("startBurn"))
 				}	 
 			}
 		}

@@ -47,8 +47,8 @@ class Oprobot ( name: String, scope: CoroutineScope, isconfined: Boolean=false  
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t06",targetState="home",cond=whenReply("engagedone"))
-					transition(edgeName="t07",targetState="error",cond=whenReply("engagerefused"))
+					 transition(edgeName="t013",targetState="home",cond=whenReply("engagedone"))
+					transition(edgeName="t014",targetState="error",cond=whenReply("engagerefused"))
 				}	 
 				state("home") { //this:State
 					action { //it:State
@@ -65,7 +65,7 @@ class Oprobot ( name: String, scope: CoroutineScope, isconfined: Boolean=false  
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t18",targetState="handleRP",cond=whenDispatch("startRobot"))
+					 transition(edgeName="t115",targetState="handleRP",cond=whenDispatch("startRobot"))
 				}	 
 				state("handleRP") { //this:State
 					action { //it:State
@@ -79,8 +79,8 @@ class Oprobot ( name: String, scope: CoroutineScope, isconfined: Boolean=false  
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t29",targetState="handleBurnIn",cond=whenReply("moverobotdone"))
-					transition(edgeName="t210",targetState="error",cond=whenReply("moverobotfailed"))
+					 transition(edgeName="t216",targetState="handleBurnIn",cond=whenReply("moverobotdone"))
+					transition(edgeName="t217",targetState="error",cond=whenReply("moverobotfailed"))
 				}	 
 				state("handleBurnIn") { //this:State
 					action { //it:State
@@ -95,8 +95,8 @@ class Oprobot ( name: String, scope: CoroutineScope, isconfined: Boolean=false  
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t311",targetState="handleHome2",cond=whenReply("moverobotdone"))
-					transition(edgeName="t312",targetState="error",cond=whenReply("moverobotfailed"))
+					 transition(edgeName="t318",targetState="handleHome2",cond=whenReply("moverobotdone"))
+					transition(edgeName="t319",targetState="error",cond=whenReply("moverobotfailed"))
 				}	 
 				state("handleHome2") { //this:State
 					action { //it:State
@@ -111,8 +111,8 @@ class Oprobot ( name: String, scope: CoroutineScope, isconfined: Boolean=false  
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t413",targetState="home2",cond=whenReply("moverobotdone"))
-					transition(edgeName="t414",targetState="error",cond=whenReply("moverobotfailed"))
+					 transition(edgeName="t420",targetState="home2",cond=whenReply("moverobotdone"))
+					transition(edgeName="t421",targetState="error",cond=whenReply("moverobotfailed"))
 				}	 
 				state("home2") { //this:State
 					action { //it:State
@@ -125,7 +125,7 @@ class Oprobot ( name: String, scope: CoroutineScope, isconfined: Boolean=false  
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t515",targetState="handleBurnOut",cond=whenEvent("burnEnd"))
+					 transition(edgeName="t522",targetState="handleBurnOut",cond=whenEvent("burnEnd"))
 				}	 
 				state("handleBurnOut") { //this:State
 					action { //it:State
@@ -136,8 +136,8 @@ class Oprobot ( name: String, scope: CoroutineScope, isconfined: Boolean=false  
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t616",targetState="handleBurnOutGo",cond=whenReply("moverobotdone"))
-					transition(edgeName="t617",targetState="error",cond=whenReply("moverobotfailed"))
+					 transition(edgeName="t623",targetState="handleBurnOutGo",cond=whenReply("moverobotdone"))
+					transition(edgeName="t624",targetState="error",cond=whenReply("moverobotfailed"))
 				}	 
 				state("handleBurnOutGo") { //this:State
 					action { //it:State
@@ -152,8 +152,8 @@ class Oprobot ( name: String, scope: CoroutineScope, isconfined: Boolean=false  
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t718",targetState="handleAshOut",cond=whenReply("moverobotdone"))
-					transition(edgeName="t719",targetState="error",cond=whenReply("moverobotfailed"))
+					 transition(edgeName="t725",targetState="handleAshOut",cond=whenReply("moverobotdone"))
+					transition(edgeName="t726",targetState="error",cond=whenReply("moverobotfailed"))
 				}	 
 				state("handleAshOut") { //this:State
 					action { //it:State
@@ -164,13 +164,14 @@ class Oprobot ( name: String, scope: CoroutineScope, isconfined: Boolean=false  
 						updateResourceRep( "info($State, $Position)"  
 						)
 						request("moverobot", "moverobot(0,0)" ,"basicrobot" )  
+						forward("add2", "add2(1)" ,"ashstorage" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t720",targetState="home",cond=whenReply("moverobotdone"))
-					transition(edgeName="t721",targetState="error",cond=whenReply("moverobotfailed"))
+					 transition(edgeName="t727",targetState="home",cond=whenReply("moverobotdone"))
+					transition(edgeName="t728",targetState="error",cond=whenReply("moverobotfailed"))
 				}	 
 				state("error") { //this:State
 					action { //it:State
