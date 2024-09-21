@@ -1,0 +1,229 @@
+System monitoring
+
+Event sonardata    : sonardata(D)   //emitted  by sonardevice  
+
+//Dispatch sonarwork : sonarwork(X)
+//Dispatch doread    : doread(X)
+
+//LED MESSAGES
+
+Dispatch ledOn : ledOn(X)
+Dispatch ledOff : ledOff(X)
+Dispatch ledBlink : ledBlink(X)
+
+
+//WIS -> monitoring_device
+
+Request pollingAsh : pollingAsh(X)
+Reply valueAsh : valueAsh(X) for pollingAsh
+
+Dispatch turnLedOn : turnLedOn(X)
+Dispatch turnLedOff : turnLedOff(X)
+
+
+//sonar -> monitoring_device
+
+Dispatch sonar_value:sonar_value(X)
+
+
+Context ctxmonitor ip [ host= "localhost" port= 8128 ]
+//Context ctxsprintdue ip [host="127.0.0.1" port=8080]
+
+//ExternalQActor wis context ctxsprintdue 
+
+QActor monitoring_device context ctxmonitor{
+	[#
+		val DLIMIT = 200
+		var Ash_level = 1000
+		var burning = 0
+	#]
+	
+	State s0 initial{
+		println("START monitoring_device") color green
+		delay 1000
+	}
+	
+	Goto idle
+	
+	State idle{
+		println("Monitoring device : WAITING FOR MESSAGES") color green
+	}
+	
+	
+	Transition t0 whenMsg sonar_value -> handleSonar
+				  whenMsg turnLedOff -> handleTurnOff
+				  whenMsg turnLedOn -> handleTurnOn
+				  whenRequest pollingAsh -> handlePolling
+				  
+				  
+	State handleSonar{
+		onMsg(sonar_value:sonar_value(K)){
+			[# Ash_level = payloadArg(0).toInt() #]
+			println("Ash_level: $Ash_level") color red
+			
+			
+			if [# Ash_level<=DLIMIT || Ash_level == 1000 #] {
+				forward led -m ledBlink:ledBlink(N)
+			}else {
+				if [# burning==1 #] {
+						forward led -m ledOn:ledOn(N)                             
+				}else{
+					forward led -m ledOff:ledOff(N) 
+				}
+				
+			}
+			
+		}
+	}
+	
+	Goto idle
+	
+	State handleTurnOff{
+		println("Monitoring device : burning off") color red
+		[# burning = 0 #]
+		forward led -m ledOff:ledff(N)
+	}
+	
+	Goto idle
+	
+	State handleTurnOn{
+		println("Monitoring device : burning on") color red
+		[# burning = 1 #]
+		forward led -m ledOn:ledOn(N)
+	}
+	
+	Goto idle
+	
+	State handlePolling{
+		println("Monitoring device : polling requested from WIS") color red
+		replyTo pollingAsh with valueAsh : valueAsh($Ash_level)
+	}
+	
+	Goto idle
+	
+	
+	
+}
+
+
+
+QActor led context ctxmonitor{
+	[#
+		lateinit var p : Process
+		lateinit var p1 : Process
+		lateinit var p2 : Process
+	#]
+	
+	State s0 initial{
+		println("START LED") color green
+		delay 1000
+	}
+	
+	Goto idle
+	
+	State idle{
+		println("LED waiting for indications") color magenta
+		delay 1000
+	}
+	
+	Transition t0 whenMsg ledOn -> handleOn
+				  whenMsg ledOff -> handleOff
+				  whenMsg ledBlink -> handleBlink
+				  
+	State handleOn{
+		println("LED ON") color green
+		//[# p       = Runtime.getRuntime().exec("python ../ledOn.py") #]
+	}		
+	
+	Goto idle
+	
+	State handleOff{
+		println("LED OFF") color green
+		//[# p       = Runtime.getRuntime().exec("python ../ledOff.py") #]
+	}	  
+				  
+	Goto idle
+	
+	State handleBlink{
+		println("LED BLINK") color green
+		//[# p       = Runtime.getRuntime().exec("python ../ledBlink.py") #]
+	}
+	
+	Goto idle
+}
+
+
+
+
+
+
+
+
+
+QActor sonar context ctxmonitor{
+	State s0 initial{
+		println("START sonar") color green
+		delay 1000
+		subscribeTo sonar_device for sonardata
+	}
+	Transition t0 whenEvent sonardata -> handleSonar
+	
+	State handleSonar{
+		
+		onMsg( sonardata : sonardata(K) ){
+			//println("im on handle sonar") color green
+			[# var D = payloadArg(0) #]
+			forward monitoring_device -m sonar_value:sonar_value($D)
+		}
+	}
+	Transition t0 whenEvent sonardata -> handleSonar
+}
+
+
+
+
+QActor sonar_device context ctxmonitor{  //mock
+	[# var K= 0 #]
+	
+	State s0 initial{
+		println("START sonar_device") color yellow
+		[# K= 1000 #]  //empty
+		delay 1500
+		emitlocalstream sonardata:sonardata($K)
+	}
+	
+	
+	Goto half_empty
+	
+	
+	State half_empty{
+		delay 30000
+		[# K= 500 #]  //empty
+		delay 1500
+		emitlocalstream sonardata:sonardata($K)
+	}
+	
+	
+	Goto full
+	
+	
+	State full{
+		delay 30000
+		[# K= 0 #]  //empty
+		delay 1500
+		emitlocalstream sonardata:sonardata($K)
+	}
+	
+	
+	Goto empty
+	
+	
+	State empty{
+		delay 30000
+		[# K= 1000 #]  //empty
+		delay 1500
+		emitlocalstream sonardata:sonardata($K)
+	}
+	
+	Goto half_empty
+}
