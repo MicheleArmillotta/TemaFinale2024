@@ -23,14 +23,14 @@ class Wastestorage ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 		//val interruptedStateTransitions = mutableListOf<Transition>()
 		
 				
-				var RP_number = 0
+				var RP_number = 0 //TEST
 				
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
 						CommUtils.outblack("scale | ready")
 						delay(1000) 
-						subscribeToLocalActor("wastestorage_device") 
+						subscribeToLocalActor("test_observer") 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

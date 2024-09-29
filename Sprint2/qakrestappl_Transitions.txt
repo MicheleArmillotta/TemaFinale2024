@@ -5,3 +5,11 @@
 {"actor":"incinerator", "msgType":"dispatch", "curstate":"handleBurn", "nextstate":"handleBurn", "msgId":"startBurn"}
 {"actor":"oprobot", "msgType":"dispatch", "curstate":"home", "nextstate":"handleRP", "msgId":"startRobot"}
 {"actor":"wastestorage", "msgType":"dispatch", "curstate":"work", "nextstate":"handlepick", "msgId":"pickRP"}
+{"actor":"monitoring_device", "msgType":"dispatch", "curstate":"idle", "nextstate":"handleSonar", "msgId":"sonar_value"}
+{"actor":"monitoring_device", "msgType":"dispatch", "curstate":"idle", "nextstate":"handleTurnOff", "msgId":"turnLedOff"}
+{"actor":"monitoring_device", "msgType":"dispatch", "curstate":"idle", "nextstate":"handleTurnOn", "msgId":"turnLedOn"}
+{"actor":"monitoring_device", "msgType":"dispatch", "curstate":"idle", "nextstate":"handleAdd", "msgId":"addAsh"}
+{"actor":"led", "msgType":"dispatch", "curstate":"idle", "nextstate":"handleOn", "msgId":"ledOn"}
+{"actor":"led", "msgType":"dispatch", "curstate":"idle", "nextstate":"handleOff", "msgId":"ledOff"}
+{"actor":"led", "msgType":"dispatch", "curstate":"idle", "nextstate":"handleBlink", "msgId":"ledBlink"}
+{"actor":"test_observer", "msgType":"dispatch", "curstate":"handleStart", "nextstate":"handle_info", "msgId":"infotest"}

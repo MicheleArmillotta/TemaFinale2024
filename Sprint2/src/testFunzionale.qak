@@ -1,0 +1,673 @@
+System testfunzionale
+
+
+//TEST MESSAGES
+
+Request start_test : start_test(X)
+Reply start_test_reply : start_test_reply(X) for start_test
+
+Dispatch infotest : infotest(X)
+Dispatch addAsh : addAsh(X)
+
+
+//SONAR MESSAGES
+Event sonardata    : sonardata(D)   //emitted  by sonardevice  
+
+//Dispatch sonarwork : sonarwork(X)
+//Dispatch doread    : doread(X)
+
+//LED MESSAGES
+
+Dispatch ledOn : ledOn(X)
+Dispatch ledOff : ledOff(X)
+Dispatch ledBlink : ledBlink(X)
+
+
+//WIS -> monitoring_device
+
+Request pollingAsh : pollingAsh(X)
+Reply valueAsh : valueAsh(X) for pollingAsh
+
+Dispatch turnLedOn : turnLedOn(X)
+Dispatch turnLedOff : turnLedOff(X)
+
+
+//sonar -> monitoring_device
+
+Dispatch sonar_value:sonar_value(X)
+
+
+
+
+Event burnEnd : burnEnd(N)
+Dispatch activation_command : activation_command(N)
+Dispatch startBurn : startBurn(N)
+//WIS e opRobot
+Dispatch startRobot : startRobot(X)
+//messaggi di interazione tra opRobot e basicRobot24
+Request engage        : engage(OWNER, STEPTIME)
+Reply   engagedone    : engagedone(ARG) for engage
+Reply   engagerefused : engagerefused(ARG) for engage
+Request moverobot    :  moverobot(TARGETX, TARGETY)
+Reply moverobotdone  :  moverobotok(ARG)
+Reply moverobotfailed:  moverobotfailed(PLANDONE, PLANTODO)
+//updateResources
+//Dispatch updatePosition : updatePosition(X)
+Dispatch info : info(X, Y)
+
+
+//waste storage messages
+Dispatch doread    : doread(X)
+Event scaledata    : scaledata(D)   //emitted  by wastestorage_device  
+Dispatch scalework : scalework(X)
+
+//Wis & storage message
+
+Request pollingRP : pollingRP(X)
+Reply   numberRP  : numberRP(X) for pollingRP
+
+//WIS E monitoring
+
+Request pollingAsh : pollingAsh(X)
+Reply valueAsh : valueAsh(X) for pollingAsh
+
+//dall' OpRobot allo storage
+
+Dispatch pickRP : pickRP(X)
+
+
+//WIS -> monitoring device
+Dispatch turnLedOn : turnLedOn(X)
+Dispatch turnLedOff : turnLedOff(X)
+
+
+//context
+
+Context ctxtest ip [host="localhost" port=8080]
+Context ctxbasicrobot ip [host="127.0.0.1"  port=8020]
+//Context ctxmonitor ip [host="localhost"  port=8128]
+
+ExternalQActor basicrobot context ctxbasicrobot
+//ExternalQActor monitoring_device context ctxmonitor
+
+
+QActor wis context ctxtest{
+	[#
+		var RobPos = ""
+		var RP_w = 0
+		var Ash_distance = 1000
+		var Inc_stat = "off"
+		val Ash_limit = 200  //qualche misura
+		var rob = "idle" 
+		
+	#]
+	
+	State s0 initial{
+		println("WIS: wis starting...") color red
+		delay 2000
+		observeResource oprobot msgid info
+	 	forward incinerator -m activation_command : activation_command(start)
+	 }
+	 Goto wait_message
+	 
+	 State wait_message{
+	 	println("WIS: waiting the state update...") color green
+	 }
+	 
+	 Transition t0 whenMsg info  -> manageState //è per forza quello lavoro off (si potrebbe aggiungere stato di errore)
+	  													//quindi il robot sta aspettando il segnale
+	State manageState{
+		//per ora polling mock
+		onMsg( info :  info(X,Y) ){
+				[# RobPos = payloadArg(1)  #]		
+		}
+		//to_DO: UPDATE RESOURCES PER MONITOR (prossimi sprint)
+		
+		request wastestorage -m pollingRP : pollingRP(N)
+		request monitoring_device -m pollingAsh : pollingAsh(N)
+ 	}
+ 	
+ 	  
+ 	  Transition t1 whenReply numberRP   -> setRP
+ 	  
+ 	  State setRP{
+ 	  		onMsg(numberRP:numberRP(X)){
+			[# RP_w = payloadArg(0).toInt() #]
+			}
+ 	  }	
+ 	 
+ 	  Transition t1 whenReply valueAsh   -> setAsh			
+ 	              	
+ 	  State setAsh{
+ 	  	onMsg(valueAsh:valueAsh(X)){
+			[# Ash_distance = payloadArg(0).toInt() #]
+			}
+			[#
+         
+         if(RP_w > 0 && Ash_distance > Ash_limit ){
+         #]
+         println(" WIS: invio messaggio start") color magenta
+         println(" WIS: controllo: condizioni corrette e start") color magenta
+         forward oprobot -m startRobot : startRobot( start )
+        	
+      [#
+      	rob = "working"
+      	}
+   
+      #]
+		
+ 	  }
+ 	
+ 	  Goto idle if [# rob === "working" #] else polling
+
+    	State polling{}
+    	Transition t1 
+    	whenTime 3000 -> manageState
+    	
+    	
+    	State idle{
+    		println("WIS: waiting for updates...") color green
+    	}
+
+		
+		Transition t2 whenMsg info  -> managePosition
+					  whenEvent burnEnd -> manageBurnEnd  //LO RECEPISCE PURE IL WISPER L?INTERAZIONE con il MONITORING_DEVICE
+		
+		
+		State managePosition{
+			println("WIS: changing the position...") color green
+			onMsg( info :  info(X,Y) ){
+				[# val Y = payloadArg(1)  #]
+				println("WIS: robPosition -> $Y") color magenta
+				//to-DO : UPDATE RESOURCE PER IL MONITOR
+				[# RobPos = "$Y"
+				if(Y.equals("BURNIN")){	
+				#]
+					println("WIS: incinerator BURN") color red
+					forward incinerator -m startBurn : startBurn(start)
+					forward monitoring_device -m turnLedOn : turnLedOn(X)
+				[#
+				}
+				#]
+				
+			}
+		}
+		
+		 Goto testAdd if [# RobPos.equals("ASHOUT") #] else idle
+		 
+		 
+		 State manageBurnEnd{
+		 	println("WIS: incinerator STOP BURN") color red
+		 	forward monitoring_device -m turnLedOff : turnLedOff(X)
+		 }
+		 
+		 Goto idle
+		
+		
+		State testAdd{ //solo a fini di test
+			forward monitoring_device -m addAsh : addAsh(X)
+		}
+		
+		Goto wait_message
+
+}
+
+
+QActor incinerator context ctxtest{
+	[#
+        val BTIME = 4000L;
+        var start = "off";
+	#]
+	
+	State s0 initial{
+		println("incinerator ready...") color yellow
+		delay 1000
+	}
+	
+	Transition t0
+		whenMsg activation_command -> start
+		
+	
+	State start{
+		println("the incinerator has started...") color green
+		[# start ="on"; #]
+	}
+	
+	Transition t1
+		whenMsg startBurn -> handleBurn
+		
+	State handleBurn{
+		println("the incinerator is burning...") color red
+		delay 15000
+		emit burnEnd : burnEnd(finish)
+		
+		
+	}
+	
+	Transition t2
+		whenMsg startBurn -> handleBurn
+		
+}
+
+
+
+QActor oprobot context ctxtest{
+	
+	[#
+		var Position = ""
+		var State = ""
+	#]
+	
+	State s0 initial{
+		println("opRobot ready...") color yellow
+		delay 300
+		
+	}
+	Goto invio
+	
+	State invio{
+		request basicrobot -m engage : engage($MyName, 330)
+		printCurrentMessage color blue
+		println("opRobot manda request")
+	}
+	
+	Transition t0 whenReply engagedone   -> home				
+ 	              whenReply engagerefused -> error
+ 	              
+ 	State home{
+ 		printCurrentMessage color blue
+ 		println("opRobot in HOME...") color red
+ 		[# Position = "HOME" #]
+ 		delay 5000
+ 		[# State = "idle" #]
+ 		updateResource [# "info($State, $Position)" #] 
+ 		
+ 	}
+ 	
+ 	Transition t1 whenMsg startRobot -> handleRP
+ 	
+ 	
+ 	State handleRP{
+ 		println("opRobot to RP...") color blue
+ 		[# State = "work" #]
+ 		updateResource [# "info($State, $Position)" #] 
+ 		request basicrobot -m moverobot : moverobot (0,4) //pos wateIN
+ 		
+ 	}
+ 	
+ 	Transition t2 whenReply moverobotdone   -> handleBurnIn			
+ 	              whenReply moverobotfailed -> error
+ 	              
+ 	              
+ 	State handleBurnIn{
+ 		println("opRobot in wateIn going to burnIn...") color yellow
+ 		[# Position = "WASTEIN" #]
+ 		delay 2000 //pick up time
+ 		forward wastestorage -m pickRP : pickRP(N)   //SOLO PER EMULARE COMPORTAMENTO MECCANICO
+ 		updateResource [# "info($State, $Position)" #] 
+ 		request basicrobot -m moverobot : moverobot (3,1) //pos burnIn
+ 		
+ 		
+ 	} 
+ 	
+ 	
+ 	Transition t3 whenReply moverobotdone   -> handleHome2		
+ 	              whenReply moverobotfailed -> error
+ 	              
+ 	              
+ 	 State handleHome2{
+ 	 	println("opRobot in burIn going to HOME...") color yellow
+ 		[# Position = "BURNIN" #]
+ 		delay 2000 //deposit time
+ 		updateResource [# "info($State, $Position)" #] 
+ 		request basicrobot -m moverobot : moverobot (0,0) //HOME
+ 	 }
+ 	 
+ 	 
+ 	 Transition t4 whenReply moverobotdone   -> home2	
+ 	              	whenReply moverobotfailed -> error
+ 	              	
+ 	              	
+ 	  State home2{
+ 	  	println("opRobot HOME waiting for the incinerator to stop...") color yellow
+ 	  	[# Position = "HOME" #]
+ 		updateResource [# "info($State, $Position)" #] 
+ 	  	
+ 	  }
+ 	  
+ 	  
+ 	  Transition t5 whenEvent burnEnd -> handleBurnOut
+ 	  
+ 	  
+ 	  State handleBurnOut{
+ 	  	println("opRobot in HOME going to gathering ashes...") color yellow
+ 		request basicrobot -m moverobot : moverobot (5,3) // burnOUT
+ 	  }
+ 	  
+ 	  Transition t6 whenReply moverobotdone   -> handleBurnOutGo	
+ 	              	whenReply moverobotfailed -> error
+ 	              	
+ 	              	
+ 	  
+ 	   State handleBurnOutGo{
+ 	 	println("opRobot in BurnOUT going to AshOUT...") color yellow
+ 		[# Position = "BURNOUT" #]
+ 		delay 2000 //gathering time
+ 		updateResource [# "info($State, $Position)" #] 
+ 		request basicrobot -m moverobot : moverobot (6,4) //AshOUT
+ 	 }
+ 	 
+ 	 
+ 	  Transition t7 whenReply moverobotdone   -> handleAshOut	
+ 	              	whenReply moverobotfailed -> error
+ 	              	
+ 	              	
+ 	  State handleAshOut{
+ 	  	println("opRobot in AshOUT going to HOME...") color yellow
+ 	  	println("RESTARTING THE ROUTINE...") color red
+ 		[# Position = "ASHOUT" #]
+ 		delay 2000 //deposit time
+ 		updateResource [# "info($State, $Position)" #] 
+ 		request basicrobot -m moverobot : moverobot (0,0) //HOME
+ 	  }
+ 	  
+ 	  
+ 	  Transition t7 whenReply moverobotdone   -> home	
+ 	              	whenReply moverobotfailed -> error
+ 	 
+ 	  
+ 	              	
+ 	              	
+ 	       
+ 	              	
+  	State error{
+ 		println("ERROR...") color red
+ 		[#System.exit(-1)#]
+ 	}
+}
+
+
+
+
+
+
+
+
+
+//WASTE STORAGE COMPONENT
+
+
+
+QActor wastestorage context ctxtest{
+	[#
+		
+		var RP_number = 0 //TEST
+		
+	#]   
+	State s0 initial{  
+		println("scale | ready") 
+		delay 1000 //give time to start scaledevice ...
+		subscribeTo test_observer for scaledata
+ 	}
+	Goto work
+	
+	State work{
+		println("$name | waits ... ") 		
+	}
+	Transition t0 whenEvent scaledata -> handlescaledata
+				  whenRequest pollingRP -> handlepolling  //dal WIS
+				  whenMsg pickRP -> handlepick // dall'OpRobot
+ 	 
+	State handlescaledata{
+		printCurrentMessage color yellow
+		onMsg( scaledata : scaledata(D) ){
+			println("$name | weight=${payloadArg(0)}") color magenta
+			
+			[# RP_number = RP_number + 1  #]
+			println("$name | the RP number now is $RP_number ") color magenta
+		}
+	}
+	Goto work 
+	
+	
+	State handlepolling{
+		println("scale | polling request from WIS")
+		replyTo pollingRP with numberRP : numberRP($RP_number)
+	}
+	
+	Goto work
+	
+	State handlepick{
+		println("$name | pick request from robot, the RP number is $RP_number") color magenta
+		[# RP_number = RP_number - 1 #]
+	}
+	
+	Goto work
+	 
+ }   
+
+
+
+
+
+
+
+
+/*QActor wastestorage_device context ctxsprintdue{
+[# var W = 0 #]
+	
+	State s0 initial{  
+		println("scale device ready") color green
+		delay 1000 
+		
+ 	}
+ 	
+ 	Goto work
+ 	
+ 	State work{
+ 		
+ 		[# W = (45..55).random()  #]
+ 		//simulazione arrivo di un RP
+ 		emitlocalstream scaledata : scaledata($W)
+ 		delay 45000
+ 	}
+ 	
+ 	Goto work
+ 	
+}//sonardevice
+*/
+
+
+//MONITORING DEVICE
+
+
+QActor monitoring_device context ctxtest{
+	[#
+		val DLIMIT = 200
+		var Ash_level = 1000 
+		var burning = 0
+	#]
+	
+	State s0 initial{
+		println("START monitoring_device") color green
+		delay 1000
+	}
+	
+	Goto idle
+	
+	State idle{
+		println("Monitoring device : WAITING FOR MESSAGES") color green
+	}
+	
+	
+	Transition t0 whenMsg sonar_value -> handleSonar
+				  whenMsg turnLedOff -> handleTurnOff
+				  whenMsg turnLedOn -> handleTurnOn
+				  whenRequest pollingAsh -> handlePolling
+				  whenMsg addAsh -> handleAdd  //solo a fini di test
+				  
+	State handleAdd{
+		[# Ash_level = Ash_level + 200 #]
+		updateResource [# "info($Ash_level)" #] 
+	}
+		
+			  
+	Goto idle	
+				  
+				  
+	State handleSonar{
+		onMsg(sonar_value:sonar_value(K)){
+			[# Ash_level = payloadArg(0).toInt() #]
+			println("Ash_level: $Ash_level") color red
+			
+			
+			if [# Ash_level<=DLIMIT || Ash_level == 1000 #] {
+				forward led -m ledBlink:ledBlink(N)
+			}else {
+				if [# burning==1 #] {
+						forward led -m ledOn:ledOn(N)                             
+				}else{
+					forward led -m ledOff:ledOff(N) 
+				}
+				
+			}
+			
+		}
+	}
+	
+	Goto idle
+	
+	State handleTurnOff{
+		println("Monitoring device : burning off") color red
+		[# burning = 0 #]
+		forward led -m ledOff:ledff(N)
+	}
+	
+	Goto idle
+	
+	State handleTurnOn{
+		println("Monitoring device : burning on") color red
+		[# burning = 1 #]
+		forward led -m ledOn:ledOn(N)
+	}
+	
+	Goto idle
+	
+	State handlePolling{
+		println("Monitoring device : polling requested from WIS") color red
+		replyTo pollingAsh with valueAsh : valueAsh($Ash_level)
+	}
+	
+	Goto idle
+	
+	
+	
+}
+
+
+
+QActor led context ctxtest{
+	[#
+		lateinit var p : Process
+		lateinit var p1 : Process
+		lateinit var p2 : Process
+	#]
+	
+	State s0 initial{
+		println("START LED") color green
+		delay 1000
+	}
+	
+	Goto idle
+	
+	State idle{
+		println("LED waiting for indications") color magenta
+		delay 1000
+	}
+	
+	Transition t0 whenMsg ledOn -> handleOn
+				  whenMsg ledOff -> handleOff
+				  whenMsg ledBlink -> handleBlink
+				  
+	State handleOn{
+		println("LED ON") color green
+		//[# p       = Runtime.getRuntime().exec("python ../ledOn.py") #]
+	}		
+	
+	Goto idle
+	
+	State handleOff{
+		println("LED OFF") color green
+		//[# p       = Runtime.getRuntime().exec("python ../ledOff.py") #]
+	}	  
+				  
+	Goto idle
+	
+	State handleBlink{
+		println("LED BLINK") color green
+		//[# p       = Runtime.getRuntime().exec("python ../ledBlink.py") #]
+	}
+	
+	Goto idle
+}
+
+
+
+
+
+
+
+
+
+/*QActor sonar context ctxmonitor{
+	State s0 initial{
+		println("START sonar") color green
+		delay 1000
+		//subscribeTo sonar_device for sonardata
+	}
+	Transition t0 whenEvent sonardata -> handleSonar
+	
+	State handleSonar{
+		
+		onMsg( sonardata : sonardata(K) ){
+			//println("im on handle sonar") color green
+			[# var D = payloadArg(0) #]
+			forward monitoring_device -m sonar_value:sonar_value($D)
+		}
+	}
+	Transition t0 whenEvent sonardata -> handleSonar
+}*/
+
+
+
+
+
+//TEST OBSERVER
+
+QActor test_observer context ctxtest{
+	[# var W = 50 #]
+	
+	
+	State s0 initial{
+		println("START TEST") color red
+		delay 1000
+		observeResource monitoring_device msgid infotest
+	}
+	
+	Transition t1 whenRequest start_test -> handleStart
+	
+	State handleStart{
+		emitlocalstream scaledata : scaledata($W)
+ 		delay 45000
+	}
+	
+	
+	Transition t2 whenMsg infotest -> handle_info
+	
+	State handle_info{
+		println("TEST ESEGUITO CON SUCCESSO RISPONDO") color red
+		replyTo start_test with start_test_reply : start_test_reply(OK)
+	}
+	
+}
+
