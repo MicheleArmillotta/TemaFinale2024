@@ -147,7 +147,7 @@ eclipse {
 
 application {
     //Define the main class for the application.
-    mainClassName    = 'it.unibo.ctxtest.MainCtxtestKt'
+    mainClassName    = 'it.unibo.ctxtestscale.MainCtxtestscaleKt'
 }
  
  jar {
@@ -170,9 +170,9 @@ task dovesiamo {
 
 distributions {
     main {
-        distributionBaseName = 'testfunzionale'
+        distributionBaseName = 'testscale'
         contents { 
-             from './testfunzionale.pl'
+             from './testscale.pl'
              from './sysRules.pl'
              from './facadeConfig.json'
         }
@@ -183,7 +183,7 @@ task run0(type: JavaExec) {
     group = "Execution"
     description = "Run the main class with JavaExecTask"
     classpath = sourceSets.main.runtimeClasspath
-    main = 'it.unibo.ctxtest.MainCtxtestKt'
+    main = 'it.unibo.ctxtestscale.MainCtxtestscaleKt'
 }
 
 /*
@@ -194,4 +194,5 @@ tasks.register('copyReport', Copy) {
     into layout.buildDirectory.dir("toArchive")
 }
 */
+//gradlew run --warning-mode all
 //gradlew run --warning-mode all

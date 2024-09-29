@@ -1,0 +1,150 @@
+System testscale
+
+
+//MESSAGGI TEST
+Request start_test : start_test(X)
+Reply start_test_reply : start_test_reply(X) for start_test
+
+Dispatch infotest : infotest(X)
+
+//waste storage messages
+Dispatch doread    : doread(X)
+Event scaledata    : scaledata(D)   //emitted  by wastestorage_device  
+Dispatch scalework : scalework(X)
+
+
+Context ctxtestscale ip [host="localhost" port=8080]
+
+
+
+QActor wastestorage context ctxtestscale{
+	[#
+		
+		var RP_number = 0
+		
+	#]   
+	State s0 initial{  
+		println("scale | ready") 
+		delay 1000 //give time to start scaledevice ...
+		subscribeTo test_observer for scaledata
+ 	}
+	Goto work
+	
+	State work{
+		println("$name | waits ... ") 		
+	}
+	Transition t0 whenEvent scaledata -> handlescaledata
+				  //whenRequest pollingRP -> handlepolling  //dal WIS
+				  //whenMsg pickRP -> handlepick // dall'OpRobot
+ 	 
+	State handlescaledata{
+		printCurrentMessage color yellow
+		onMsg( scaledata : scaledata(D) ){
+			println("$name | weight=${payloadArg(0)}") color magenta
+			
+			[# RP_number = RP_number + 1  #]
+			println("$name | the RP number now is $RP_number ") color magenta
+			updateResource [# "infotest($RP_number)" #]
+		}
+	}
+	Goto work 
+	
+	
+	State handlepolling{
+		println("scale | polling request from WIS")
+		//replyTo pollingRP with numberRP : numberRP($RP_number)
+	}
+	
+	Goto work
+	
+	State handlepick{
+		println("$name | pick request from robot, the RP number is $RP_number") color magenta
+		[# RP_number = RP_number - 1 #]
+	}
+	
+	Goto work
+	 
+ }   
+
+
+
+
+
+
+
+
+/*QActor wastestorage_device context ctxtestscale{
+[# var W = 0 #]
+	
+	State s0 initial{  
+		println("scale device ready") color green
+		delay 1000 
+		
+ 	}
+ 	
+ 	Goto work
+ 	
+ 	State work{
+ 		
+ 		[# W = (45..55).random()  #]
+ 		//simulazione arrivo di un RP
+ 		emitlocalstream scaledata : scaledata($W)
+ 		delay 45000
+ 	}
+ 	
+ 	Goto work
+ 	
+}*/
+
+
+QActor test_observer context ctxtestscale{
+	
+	[# var W = 50 
+	   var RP_w = 0
+	   var RP_string = ""	
+	#]
+	
+	
+	State s0 initial{  
+		println("OBSERVER READY") color green
+		delay 1000 
+		observeResource wastestorage msgid infotest
+ 	}
+ 	
+ 	Transition t1 whenRequest start_test -> handleStart
+	
+	State handleStart{
+		emitlocalstream scaledata : scaledata($W)
+ 		
+	}
+	
+	
+	Transition t2 whenMsg infotest -> handle_info
+	
+	State handle_info{
+		println("TEST ESEGUITO CON SUCCESSO RISPONDO") color red
+		onMsg( infotest :  infotest(X) ){
+				[# RP_string = payloadArg(0)  
+				   
+				   RP_w = RP_string.toInt()
+					
+				#]		
+		}
+		
+		
+		[#
+			if(RP_w > 0 ){
+		#]
+			replyTo start_test with start_test_reply : start_test_reply(ok)
+		[#
+		}else{
+		#]
+			replyTo start_test with start_test_reply : start_test_reply(notok)
+		[#
+		}
+		#]
+		
+	}
+ 	
+ 	
+}

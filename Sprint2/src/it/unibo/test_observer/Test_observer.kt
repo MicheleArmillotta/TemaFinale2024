@@ -21,35 +21,50 @@ class Test_observer ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		//val interruptedStateTransitions = mutableListOf<Transition>()
-		 var W = 50  
+		 var W = 50 
+			   var RP_w = 0
+			   var RP_string = ""	
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						CommUtils.outred("START TEST")
+						CommUtils.outgreen("OBSERVER READY")
 						delay(1000) 
-						observeResource("localhost","8080","ctxtest","monitoring_device","infotest")
+						observeResource("localhost","8080","ctxtestscale","wastestorage","infotest")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t136",targetState="handleStart",cond=whenRequest("start_test"))
+					 transition(edgeName="t11",targetState="handleStart",cond=whenRequest("start_test"))
 				}	 
 				state("handleStart") { //this:State
 					action { //it:State
 						emitLocalStreamEvent("scaledata", "scaledata($W)" ) 
-						delay(45000) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t237",targetState="handle_info",cond=whenDispatch("infotest"))
+					 transition(edgeName="t22",targetState="handle_info",cond=whenDispatch("infotest"))
 				}	 
 				state("handle_info") { //this:State
 					action { //it:State
 						CommUtils.outred("TEST ESEGUITO CON SUCCESSO RISPONDO")
-						answer("start_test", "start_test_reply", "start_test_reply(OK)"   )  
+						if( checkMsgContent( Term.createTerm("infotest(X)"), Term.createTerm("infotest(X)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 RP_string = payloadArg(0)  
+												   
+												   RP_w = RP_string.toInt()
+													
+						}
+						
+									if(RP_w > 0 ){
+						answer("start_test", "start_test_reply", "start_test_reply(ok)"   )  
+						
+								}else{
+						answer("start_test", "start_test_reply", "start_test_reply(notok)"   )  
+						
+								}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
