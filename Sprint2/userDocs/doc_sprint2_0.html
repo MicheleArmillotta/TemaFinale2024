@@ -300,9 +300,21 @@
 	<h3>Scale</h3>
 	<li>
 	<cite><strong>The WasteStorage owns a weighing device (Scale)</strong></cite> <br>
-    Scale e' il dispositivo utilizzato per pesare gli RP. In risposta alla richiesta del committente, abbiamo deciso di introdurre un nuovo <a	href="./QakActors24.html">attore</a>, WasteStorage, che funge da gestore dello stream di dati e delle comunicazioni con il WIS. Poiche' WasteStorage e' un attore, agisce come un'entita' autonoma che invia e riceve messaggi, permettendo una gestione indipendente del flusso di informazioni. Il WIS comunichera' con WasteStorage per richiedere lo stato degli RP tramite un processo di polling. 
+    Scale e' il dispositivo utilizzato per pesare gli RP. In risposta alla richiesta del committente,
+	abbiamo deciso di introdurre un nuovo <a href="./QakActors24.html">attore</a>, WasteStorage, che funge da gestore dello stream di dati e delle comunicazioni con il WIS. 
+	Poiche' WasteStorage e' un attore, agisce come un'entita' autonoma che invia e riceve messaggi, permettendo una gestione indipendente del flusso di informazioni. 
+	Il WIS comunichera' con WasteStorage per richiedere lo stato degli RP tramite un processo di polling. 
+		<br>
+	Il comando sara' essere modellato come <code>Request pollingRP : pollingRP(X)</code>
 
-    Il comando sara' essere modellato come <code>Request pollingRP : pollingRP(X)</code>
+</li>
+	<br>
+	<li>
+		Per gestire l'output del dispositivo Scale hardware, seguiremo il modello gia' definito con Sonar24 ("unibo.sonarqak24").
+		In questo contesto e' stato introdotto un nuovo <a href="./QakActors24.html">attore</a>, <strong>WasteStorage_device</strong>
+		incaricato di elaborare e filtrare il flusso di dati proveniente dalla Scale fisica, inviando al componente WasteStorage solo le informazioni rilevanti sul peso dei rifiuti. 
+		WasteStorage_Device e' modellato come un componente mock che invia periodicamente dati filtrati relativi al peso dei rifiuti depositati. 
+		Per simulare il prelievo di un RP da parte dell'OpRobot, e' stato introdotto un nuovo messaggio : <code>Dispatch pickRP(X) : pickRP(X)</code>, che viene appunto mandato da quest'ultimo e ricevuto dal WasteStorage.
 	</li>
 	
 </div>
@@ -333,12 +345,19 @@
 
 <div class="remark">
 	<h3>SONAR </h3>
-   <li> Il Sonar e' il componente responsabile dell'invio delle informazioni relative al livello dell'AshStorage al Monitoring Device. Gestisce l'output del Sonar hardware (flusso di dati) e , per farlo, si seguira' il modello definito con Sonar24 ("unibo.sonarqak24"), ovvero si introdurra' un altro <a	href="./QakActors24.html">attore</a> sonar_device che gestisce l'output del sonar fisico filtrandolo per il componente Sonar.	<br>
-    il sonar_device inviera' al Sonar:<br>
+   <li> Il Sonar e' il componente responsabile dell'invio delle informazioni relative al livello dell'AshStorage al Monitoring Device. Gestisce l'output del Sonar hardware (flusso di dati) e , per farlo, si seguira' il modello definito con Sonar24 ("unibo.sonarqak24"), ovvero si introdurra' un altro <a	href="./QakActors24.html">attore</a> <strong>sonar_device</strong> che gestisce l'output del sonar fisico filtrandolo per il componente Sonar.	<br>
+	Il sonar_device inviera' al Sonar:<br>
     <code>Event sonarData : sonarData(X)</code>  <br>
    </li>
+   <br>
+   <li>
+	Anche il <strong>sonar_device</strong> viene modellato come un mock, poiche' non e' disponibile un dispositivo fisico in grado di rilevare la distanza della cenere tramite sonar.
+
+   </li>
+   <br>
    <li> Il Sonar inviera' al Monitoring Device un dispatch per aggiornare il coordinatore sul livello della cenere nell' AshStorage:<br>
    <code>Dispatch ashLevel : ashLevel(X)</code> 
+ 
 </li>
 </div>
 
@@ -378,31 +397,30 @@
 <h2>Project</h2> 
 <div class="remark">
 	<a href="../src/Sprint2.qak">Sprint2</a>
+	<a href="../../MonitoringDeviceSprint2/src/monitoring.qak">Monitoring</a>
 	<br></br>
 	<h3>Architettura logica</h3>
-            <img src="../sprintunoarch.png">
+            <img src="./sprintduearch.png">
+			
 	<br>
+	<h3>Architettura Monitoring Device</h3>
+			<img src="./monitoringarch.png">
 	<br><br>
 </div>
 
 <h2>Testing</h2> 
 <div class="remark">
-	<a href="../../Sprint1/src/main/java/test/TestOpRobot.java">Test OpRobot</a>:
-            controlla la posizione e lo stato dell'OpRobot, ad inizio e fine routine:
-			(idle,HOME) -> (working, ASHOUT)
+	<a href="../../Sprint2/src/main/java/test/functionaltest.java">Test Funzionale</a>:
+            controlla il corretto funzionamento del sistema alla simulazione dell'aggiunta di peso nel contenitore WasteStorage -> se il valore delle ceneri nell'AshStorage aumenta  e' corretto
     <br></br>
-	<a href="../../Sprint1/src/main/java/test/TestIncinerator.java">Test Incinerator</a>:
-			controlla il corretto funzionamento del comando di attivazione e di inizio fase di bruciatura dell'Incinerator:
-			- activation_command(ok)
-			- startBurn(ok)
+	<a href="../../Sprint1/src/main/java/test/scaletest.java">Test Scale</a>:
+			controlla che il WasteStorage percepisca l'aggiunta di un RP alla Scale
 	<br></br>
-	<a href="../../Sprint1/src/main/java/test/Testwis.java">Test Wis</a>:
-			controlla che il comando "startRobot" venga inviato solo se sono rispettate tutte le condizioni, e controlla l'invio del comando "startBurn" dopo aver osservato la posizione dell'OpRobot: OpRobot -> BURNIN
-
+	<a href="../../MonitoringDeviceSprint2/src/main/java/test/TestAsh.java">Test Ash</a>:
+			viene verificato che il livello di cenere diminuisca correttamente, e che il comportamento del LED segua le regole di monitoraggio, rispondendo con esito positivo o negativo.
 	<br></br>
-	<a href="../../Sprint1/src/main/java/test/Testfunzionale.java">Test Funzionale tramite WASTESTORAGE e ASHSTORAGE</a>:
-			<li>Al caricamento degli RP nel WasteStorage, dopo TOT tempo, AshStorage aumenta </li>
-			<li>Se Ash AshStorage e' gia' pieno dalle routine precedenti, l'OpRobot non inizia il ciclo, e l'RP non viene prelevato finche' non viene svuotato l'AshStorage</li>
+	<a href="../../MonitoringDeviceSprint2/src/main/java/test/TestLed.java">Test Led</a>:
+			viene controllato il monitoring_device, aspettando aggiornamenti sull'inceneritore e il conseguente comportamento del led. Quando riceve un nuovo stato, verifica se corrisponde alle condizioni previste (brucia attivo o inattivo) e se il led rispetta le condizioni, rispondendo con un esito di test (ok o no).
 			
 </div>
 

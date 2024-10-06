@@ -508,7 +508,7 @@ QActor monitoring_device context ctxtest{
 				  
 	State handleAdd{
 		[# Ash_level = Ash_level + 200 #]
-		updateResource [# "info($Ash_level)" #] 
+		updateResource [# "infotest($Ash_level)" #] 
 	}
 		
 			  
