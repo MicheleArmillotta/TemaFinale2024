@@ -1,4 +1,9 @@
-System monitoring
+System testash
+
+// messaggi di test
+Request start_test : start_test(X)
+Reply start_test_reply : start_test_reply(X) for start_test
+
 
 Event sonardata    : sonardata(D)   //emitted  by sonardevice  
 
@@ -24,9 +29,10 @@ Dispatch turnLedOff : turnLedOff(X)
 //sonar -> monitoring_device
 
 Dispatch sonar_value:sonar_value(X)
+Dispatch nuovo : nuovo(X, Y)
 
 
-Context ctxmonitor ip [ host= "localhost" port= 8128 ]
+Context ctxmonitor ip [ host= "localhost" port= 10015 ]
 //Context ctxsprintdue ip [host="127.0.0.1" port=8080]
 
 //ExternalQActor wis context ctxsprintdue 
@@ -60,10 +66,11 @@ QActor monitoring_device context ctxmonitor{
 		onMsg(sonar_value:sonar_value(K)){
 			[# Ash_level = payloadArg(0).toInt() #]
 			println("Ash_level: $Ash_level") color red
-			
+			updateResource [# "nuovo($Ash_level, 0)" #]			
 			
 			if [# Ash_level<=DLIMIT || Ash_level == 1000 #] {
 				forward led -m ledBlink:ledBlink(N)
+				updateResource [# "nuovo($Ash_level, 1)" #]
 			}else {
 				if [# burning==1 #] {
 						forward led -m ledOn:ledOn(N)                             
@@ -132,33 +139,25 @@ QActor led context ctxmonitor{
 				  
 	State handleOn{
 		println("LED ON") color green
-		[# p       = Runtime.getRuntime().exec("python ledOn.py") #]
+		//[# p       = Runtime.getRuntime().exec("python ledOn.py") #]
 	}		
 	
 	Goto idle
 	
 	State handleOff{
 		println("LED OFF") color green
-		[# p1       = Runtime.getRuntime().exec("python edOff.py") #]
+		//[# p1       = Runtime.getRuntime().exec("python edOff.py") #]
 	}	  
 				  
 	Goto idle
 	
 	State handleBlink{
 		println("LED BLINK") color green
-		[# p2       = Runtime.getRuntime().exec("python ledBlink.py") #]
+		//[# p2       = Runtime.getRuntime().exec("python ledBlink.py") #]
 	}
 	
 	Goto idle
 }
-
-
-
-
-
-
-
-
 
 QActor sonar context ctxmonitor{
 	State s0 initial{
@@ -178,9 +177,6 @@ QActor sonar context ctxmonitor{
 	}
 	Transition t0 whenEvent sonardata -> handleSonar
 }
-
-
-
 
 QActor sonar_device context ctxmonitor{  //mock
 	[# var K= 0 #]
@@ -227,3 +223,68 @@ QActor sonar_device context ctxmonitor{  //mock
 	
 	Goto half_empty
 }
+
+QActor test_observer context ctxmonitor{
+	
+	[#
+		var AshStorage_prec = 0
+		var AshStorage_new = 0
+		var led = 0
+	#]
+	
+	State s0 initial{
+		println("$name ready...") color blue
+//		delay 1000
+		observeResource monitoring_device msgid nuovo
+	}
+	
+	Transition t0 whenMsg nuovo -> prima
+	
+	State prima{
+		printCurrentMessage color magenta
+		onMsg( nuovo : nuovo(X, Y) ){
+			[# AshStorage_prec = payloadArg(0).toInt() #]
+			[# led = payloadArg(0).toInt() #]
+			println("$name AshStorage_prec: $AshStorage_prec") color magenta // print per test 	
+		}
+	}
+	
+	Transition t1 whenRequest start_test -> handleStart
+				  
+	State handleStart{
+		printCurrentMessage color green
+   		println("$name vado in attesa di nuovo aggiornamento") color magenta
+	}
+	
+	Transition t1 whenMsg nuovo -> fine
+	
+	State fine{
+		printCurrentMessage color magenta
+		onMsg( nuovo : nuovo(X,Y) ){
+			[# AshStorage_new = payloadArg(0).toInt() #]
+			[# led = payloadArg(1).toInt() #]
+			println("$name AshStorage_new: $AshStorage_new") color magenta // print per test 	
+			
+			[# if(((AshStorage_new <= AshStorage_prec) && (led==0)) || ((led==1) && (AshStorage_new <= 200 || AshStorage_new >=1000))){  #]
+ 
+   			     replyTo start_test with start_test_reply : start_test_reply(ok)
+   			[# }else{ #]
+   			   	replyTo start_test with start_test_reply : start_test_reply(NO)
+   				
+   		[#	} #]
+		}
+	}
+	
+	Transition t1 whenMsg nuovo -> fine
+	
+}
+
+
+
+
+
+
+
+
+
+
