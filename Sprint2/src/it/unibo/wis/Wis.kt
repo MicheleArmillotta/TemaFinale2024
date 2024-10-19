@@ -59,7 +59,7 @@ class Wis ( name: String, scope: CoroutineScope, isconfined: Boolean=false  ) : 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 RobPos = payloadArg(1)   
 						}
-						request("pollingRP", "pollingRP(N)" ,"wastestorage" )  
+						request("pollingRP", "pollingRP(N)" ,"scale" )  
 						request("pollingAsh", "pollingAsh(N)" ,"monitoring_device" )  
 						//genTimer( actor, state )
 					}

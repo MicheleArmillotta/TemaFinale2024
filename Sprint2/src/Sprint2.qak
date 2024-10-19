@@ -42,6 +42,8 @@ Dispatch turnLedOn : turnLedOn(X)
 Dispatch turnLedOff : turnLedOff(X)
 
 
+
+
 //context
 
 Context ctxsprintdue ip [host="localhost" port=8080]
@@ -84,7 +86,7 @@ QActor wis context ctxsprintdue{
 		}
 		//to_DO: UPDATE RESOURCES PER MONITOR (prossimi sprint)
 		
-		request wastestorage -m pollingRP : pollingRP(N)
+		request scale -m pollingRP : pollingRP(N)
 		request monitoring_device -m pollingAsh : pollingAsh(N)
  	}
  	
@@ -259,7 +261,7 @@ QActor oprobot context ctxsprintdue{
  		println("opRobot in wateIn going to burnIn...") color yellow
  		[# Position = "WASTEIN" #]
  		delay 2000 //pick up time
- 		forward wastestorage -m pickRP : pickRP(N)   //SOLO PER EMULARE COMPORTAMENTO MECCANICO
+ 		forward scale -m pickRP : pickRP(N)   //SOLO PER EMULARE COMPORTAMENTO MECCANICO
  		updateResource [# "info($State, $Position)" #] 
  		request basicrobot -m moverobot : moverobot (3,1) //pos burnIn
  		
@@ -350,11 +352,11 @@ QActor oprobot context ctxsprintdue{
 
 
 
-//WASTE STORAGE COMPONENT
+//SCALE COMPONENTs
 
 
 
-QActor wastestorage context ctxsprintdue{
+QActor scale context ctxsprintdue{
 	[#
 		
 		var RP_number = 0
@@ -363,7 +365,7 @@ QActor wastestorage context ctxsprintdue{
 	State s0 initial{  
 		println("scale | ready") 
 		delay 1000 //give time to start scaledevice ...
-		subscribeTo wastestorage_device for scaledata
+		subscribeTo scale_device for scaledata
  	}
 	Goto work
 	
@@ -409,7 +411,7 @@ QActor wastestorage context ctxsprintdue{
 
 
 
-QActor wastestorage_device context ctxsprintdue{
+QActor scale_device context ctxsprintdue{
 [# var W = 0 #]
 	
 	State s0 initial{  
@@ -431,6 +433,8 @@ QActor wastestorage_device context ctxsprintdue{
  	Goto work
  	
 }//sonardevice
+
+
 
 
 

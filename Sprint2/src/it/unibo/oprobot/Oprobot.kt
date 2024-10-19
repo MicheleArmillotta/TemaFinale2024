@@ -87,7 +87,7 @@ class Oprobot ( name: String, scope: CoroutineScope, isconfined: Boolean=false  
 						CommUtils.outyellow("opRobot in wateIn going to burnIn...")
 						 Position = "WASTEIN"  
 						delay(2000) 
-						forward("pickRP", "pickRP(N)" ,"wastestorage" ) 
+						forward("pickRP", "pickRP(N)" ,"scale" ) 
 						updateResourceRep( "info($State, $Position)"  
 						)
 						request("moverobot", "moverobot(3,1)" ,"basicrobot" )  

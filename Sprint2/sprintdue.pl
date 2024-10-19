@@ -32,7 +32,7 @@ context(ctxmonitor, "127.0.0.1",  "TCP", "8128").
  static(incinerator).
   qactor( oprobot, ctxsprintdue, "it.unibo.oprobot.Oprobot").
  static(oprobot).
-  qactor( wastestorage, ctxsprintdue, "it.unibo.wastestorage.Wastestorage").
- static(wastestorage).
-  qactor( wastestorage_device, ctxsprintdue, "it.unibo.wastestorage_device.Wastestorage_device").
- static(wastestorage_device).
+  qactor( scale, ctxsprintdue, "it.unibo.scale.Scale").
+ static(scale).
+  qactor( scale_device, ctxsprintdue, "it.unibo.scale_device.Scale_device").
+ static(scale_device).

@@ -23,7 +23,7 @@ class Monitoring_device ( name: String, scope: CoroutineScope, isconfined: Boole
 		//val interruptedStateTransitions = mutableListOf<Transition>()
 		
 				val DLIMIT = 200
-				var Ash_level = 1000 
+				var Ash_level = 1000
 				var burning = 0
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
@@ -49,19 +49,6 @@ class Monitoring_device ( name: String, scope: CoroutineScope, isconfined: Boole
 					transition(edgeName="t029",targetState="handleTurnOff",cond=whenDispatch("turnLedOff"))
 					transition(edgeName="t030",targetState="handleTurnOn",cond=whenDispatch("turnLedOn"))
 					transition(edgeName="t031",targetState="handlePolling",cond=whenRequest("pollingAsh"))
-					transition(edgeName="t032",targetState="handleAdd",cond=whenDispatch("addAsh"))
-				}	 
-				state("handleAdd") { //this:State
-					action { //it:State
-						 Ash_level = Ash_level + 200  
-						updateResourceRep( "info($Ash_level)"  
-						)
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
 				}	 
 				state("handleSonar") { //this:State
 					action { //it:State

@@ -1,0 +1,467 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+<head>
+	<!--
+<link rel="stylesheet" type="text/css" href="../css/issStyle1.css">
+<script type="text/javascript" src="../css/issStyle.js"></script>
+-->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.7.4/dist/css/foundation.min.css"
+		crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/foundation-sites@6.7.4/dist/js/foundation.min.js"
+		crossorigin="anonymous"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="./commons/resources/styles/templateISS.css">
+	<link rel="stylesheet" type="text/css" href="./commons/resources/styles/main.css">
+	<link rel="stylesheet" type="text/css" href="./commons/resources/styles/navbar.css">
+	<link rel="stylesheet" type="text/css" href="./commons/resources/styles/table.css">
+	<link rel="stylesheet" type="text/css" href="./commons/resources/styles/code.css">
+	<!-- <script type="text/javascript" src="./commons/resources/scripts/myScripts.js"></script> -->
+	<style type="text/css">
+		body {
+			margin-left: 30px;
+			margin-right: 30px;
+		}
+
+		;
+
+		P {
+			font-family: Tahoma;
+			font-size: 10pt;
+		}
+
+		;
+
+		a,
+		a:visited,
+		a:active,
+		a:link,
+		a:hover {
+			text-decoration: underline;
+			color: #545454;
+			background-color: transparent;
+			font-size: 93%;
+		}
+
+		a:hover {
+			background-color: #cccccc;
+		}
+
+
+		hr {
+			clear: both;
+			height: 1px;
+			color: #242424;
+			background-color: transparent;
+		}
+
+		h1,
+		h2,
+		h3 {
+			color: #242424;
+			clear: left;
+			font: 100% Tahoma, Helvetica, Arial, sans-serif;
+			margin-bottom: 0.5em;
+			padding-top: 0.5em;
+			border-radius: 10px;
+			padding: 5px;
+		}
+
+		top {
+			width: 100%;
+		}
+
+
+		#i {
+			color: #ff1010;
+		}
+
+		tt {
+			font-family: "Arial";
+			font-size: 90%;
+			color: #006600;
+		}
+
+		em {
+			font-family: "Arial";
+			font-size: 80%;
+			font-weight: bold;
+			border-style: solid;
+			border-color: #abe876;
+			color: #1632cc;
+		}
+
+		bc {
+			font-family: "Arial";
+			font-size: 90%;
+			font-weight: bold;
+			color: #990000;
+			background-color: #fcf8c7;
+		}
+
+		ks {
+			font-family: "Arial";
+			font-weight: bold;
+			color: #0000CD;
+			font-size: 90%;
+		}
+
+		kc {
+			font-family: "Arial";
+			font-weight: bold;
+			color: #008000;
+			font-size: 90%;
+		}
+
+		pre {
+			font-family: "Consolas";
+			font-size: 85%;
+			background-color: #f5f5f5;
+			border: 1.5px solid silver;
+			padding: 5px;
+		}
+
+		m {
+			font-family: "Helvetica";
+			line-height: 100%;
+			font-size: 75%;
+		}
+
+		div.body {
+
+			font-size: 18px;
+		}
+
+		k {
+			color: #990000;
+			font-weight: bold;
+			font-size: 90%;
+		}
+
+		h1 {
+			font-size: 150%;
+			background-color: #b2c0ff;
+			padding: 10px;
+		}
+
+		h2 {
+			background-color: #9ed8ff;
+			font-size: 130%;
+		}
+
+		h3 {
+			background-color: #e6ccff;
+			font-size: 100%;
+		}
+
+		h4 {
+			background-color: #ccffcc;
+			font-size: 100%;
+			width: 95%;
+			border-radius: 5px;
+			padding: 2px;
+		}
+
+		h5 {
+			background-color: #d5ffb0;
+			font-size: 100%;
+
+		}
+
+		div.req {
+			background-color: #d9ffb3;
+			font-size: 18px;
+			width: 700px;
+			border: 3px solid green;
+			padding: 15px;
+			margin: 10px;
+		}
+
+		div.remark {
+			background-color: #E3F2FD;
+			border: 1.5px solid #d5f2ed;
+			padding: 15px;
+			margin: 10px;
+			border-radius: 25px;
+		}
+
+		table,
+		th,
+		td {
+			border: 1px solid black;
+			border-collapse: collapse;
+		}
+
+		ol,
+		ul,
+		li {
+			margin: 0;
+			margin-left: 10px;
+			padding: 0;
+			padding-bottom: 5px;
+		}
+
+		table,
+		th,
+		td {
+			border: 1px solid black;
+		}
+
+		img {
+			border: 1.5px solid #d5f2ed
+		}
+
+		a,
+		a:visited,
+		a:active,
+		a:link,
+		a:hover {
+			text-decoration: underline;
+			color: #545454;
+			background-color: transparent;
+		}
+
+		div.wrapdesc {
+			width: 90%;
+			margin: auto;
+		}
+
+		div.imagedesc {
+			width: 85%;
+			margin: auto;
+		}
+	</style>
+    
+ 
+   
+</head>
+	
+		
+  
+
+
+   
+<title>SPRINT2</title></head>
+    
+<!--
+	<body onload="loadNav();">
+		<div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
+		<div id="sidenav" class="sidenav">
+			<a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
+			<a href=".README.html">ReadMe</a>
+			<a class="sprint" href="../../../Sprint0/Codice/userDocs/Cold%20Storage%20Service%20-%20Natali%20V3.html">Sprint0</a>
+			<a class="sprint" href="../../../Sprint1.0/Codice/userDocs/Sprint%201.0%20-%20V3.html">Sprint1.0</a>
+			<a class="sprint" href="../../../Sprint1.1/Codice/userDocs/Sprint%201.1%20-%20V3.html">Sprint1.1</a>
+			<a id="currentSprint" class="sprint" href="#">&#8211;&#8212; Sprint2 &#8212;&#8211;</a>
+			<div class="sidenavSection">
+				<a href="#Goal Sprint 2">Goal Sprint 2</a>
+				<a href="#Requisiti">Requisiti</a>
+				<a href="#Analisi dei Requisiti">Analisi dei Requisiti</a>
+				<a href="#Analisi del Problema">Analisi del Problema</a>
+				<a href="#Test Plan">Test Plan</a>
+				<a href="#Progettazione">Progettazione</a>
+				<a href="#Deployment">Deployment</a>
+			</div>
+			<p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
+			<a class="sprint" href="../../../Sprint3/Codice/userDoc/Sprint%203.html">Sprint3</a>
+			<bottom-spacer/>
+		</div>
+-->
+<body>
+<div id="top">
+<h1>SPRINT2<font size="5"></font> </h1>
+</div>  
+
+<div class="body"> 
+<h2>Introduzione</h2>
+<div class="remark">
+	<a href="./TemaFinale24.html">Richiesta del committente</a> <br><br>
+	<strong>GOAL:</strong> Nello SPRINT2 ci si occupera' di presentare un architettura logica, un modello eseguibile e i relativi test per i componenti <strong>MonitoringDevice</strong> e <strong>Scale</strong>, e di sviluppare i relativi test
+	
+</div>
+ 
+
+
+ 
+
+<h2>Analisi del Problema dei componenti WIS, OpRobot, INCINERATOR</h2>
+<div class="remark">
+   Punto di partenza: <a href="./doc_sprint1.html">Sprint1</a>
+   <img src="./sprintunoarch.png">
+
+
+</div>
+<h2>Analisi del problema</h2>
+<div class="remark">
+	Si analizzeranno le principali problematiche per ogni componente.
+	<br>
+	<br>
+
+	<h3>Scale</h3>
+	<li>
+	<cite><strong>The WasteStorage owns a weighing device (Scale)</strong></cite> <br>
+    Scale e' il dispositivo utilizzato per pesare gli RP. In risposta alla richiesta del committente,
+	si decide di introdurre un nuovo <a href="./QakActors24.html">attore</a>, Scale, che funge da gestore dello stream di dati del 
+    dispositivo di pesaggio e delle comunicazioni con il WIS. La decisione di modellare Scale come un attore è stata
+    fatta per garantire maggiore indipendenza dei componenti e flessibilità del deployment (Scale essendo un dispositivo
+    fisico potrebbe aver bisogno di essere operato da altri contesti). In più la possibilità di comunicare
+    attivamente è di aiuto con altri componenti non modellati in questo Sprint (la GUI gioverebbe di aggiornamenti
+    in tempo reale piuttosto che essere aggiornata quando il WIS ordina un polling).
+	Il WIS comunichera' con Scale per richiedere lo stato degli RP tramite un processo di polling. 
+		<br>
+	Il comando sara' essere modellato come <code>Request pollingRP : pollingRP(X)</code>
+
+</li>
+	<br>
+	<li>
+		Per gestire l'output del dispositivo Scale hardware, si può seguire il modello gia' definito con Sonar24 ("unibo.sonarqak24").
+		In questo contesto e' stato introdotto un nuovo <a href="./QakActors24.html">attore</a>, <strong>Scale_device</strong>
+		incaricato di elaborare e filtrare il flusso di dati proveniente dalla Scale fisica, inviando al componente Scale solo le informazioni rilevanti sul peso dei rifiuti. 
+		Scale_device e' modellato come un componente mock che invia periodicamente dati filtrati relativi al peso dei rifiuti depositati. 
+		Per simulare il prelievo di un RP da parte dell'OpRobot, e' stato introdotto un nuovo messaggio : <code>Dispatch pickRP(X) : pickRP(X)</code>, che viene appunto mandato da quest'ultimo e ricevuto da Scale.
+	</li>
+	
+</div>
+
+<div class="remark">
+	<h3>Monitoring Device</h3>
+	<li>
+		Il Monitoring Device e' il componente responsabile dell'interazione tra il SONAR, il LED e il WIS. Il dispositivo opera su un Raspberry Pi, ed in quanto collegato a questo 
+		e' possibile considerarlo in un contesto diverso. Il WIS richiede lo stato dell'AshStorage tramite una richiesta di polling modellata come: <code>Request pollingAsh : pollingAsh(X)</code>
+	</li>
+		<br>
+		
+	<li>
+        Inoltre, il WIS gestisce l'accensione e lo spegnimento del LED in base allo stato dell'inceneritore (quando e' in fase di combustione o ha terminato).
+		
+		Questi comandi sono inviati tramite le seguenti dispatch: <br>
+        <code>Dispatch turnLedOn : turnLedOn(X)</code> <br>
+        <code>Dispatch turnLedOff : turnLedOff(X)</code>
+	</li>
+	
+</div>
+
+<div class="remark">
+	<h3>LED</h3>
+    Il Led un componente molto semplice che si occupa esclusivamente di gestire l'accensione e lo spegnimento del LED fisico situato sul Raspberry Pi. 
+	Data la possibile necessita' di invio e ricezione dei comandi (anche il LED potrebbe inviare messaggi alla GUI per l'update) 
+	viene implementato come un <a	href="./QakActors24.html">attore</a>.
+    Funziona ricevendo i seguenti comandi dal Monitoring Device:	<br>
+    <code>Dispatch LedOn : LedOn(X)</code> <br>
+    <code>Dispatch LedOff : LedOff(X)</code> <br>
+    <code>Dispatch LedBlink : LedBlink(X)</code>
+</div>
+
+<div class="remark">
+	<h3>SONAR </h3>
+   <li> Il Sonar e' il componente responsabile dell'invio delle informazioni relative al livello dell'AshStorage al Monitoring Device. Gestisce l'output del Sonar hardware (flusso di dati) e , per farlo, si seguira' il modello definito con Sonar24 ("unibo.sonarqak24"), ovvero si introdurra' un altro <a	href="./QakActors24.html">attore</a> <strong>sonar_device</strong> che gestisce l'output del sonar fisico filtrandolo per il componente Sonar.	<br>
+	Il sonar_device inviera' al Sonar:<br>
+    <code>Event sonarData : sonarData(X)</code>  <br>
+   </li>
+   <br>
+   <li>
+	Anche il <strong>sonar_device</strong> viene modellato come un mock, poiche' non e' disponibile un dispositivo fisico in grado di rilevare la distanza della cenere tramite sonar.
+
+   </li>
+   <br>
+   <li> Il Sonar inviera' al Monitoring Device un dispatch per aggiornare il coordinatore sul livello della cenere nell' AshStorage:<br>
+   <code>Dispatch ashLevel : ashLevel(X)</code> 
+ 
+</li>
+</div>
+
+
+<h2>Test plans</h2> 
+<div class="remark"> 
+	<h3>Test monitoring device 1</h3>
+    Il test controlla se quando viene posizionato un RP sulla Scale il Waste Storage percepisce il cambiamento	<br>
+	<li>Il test viene superato se viene rilevato un cambiamento.</li>
+	
+	<li>Il test fallisce altrimenti.</li>
+
+	<br>
+	<h3>Test monitoring device 2</h3>
+	Il test controlla se quando viene modificato il valore dell'Ash il Monitoring Device percepisce il cambiamento, e nel caso gestisca in modo corretto il Led se l'AshStorage e' pieno o vuoto.
+	<br>
+	<li>Il test viene superato se viene sia rilevato un cambiamento che gestito correttamente il led.</li>
+	
+	<li>Il test fallisce altrimenti.</li>
+
+	<br>
+	<h3>Test monitoring device 3</h3>
+	Il test controlla  che il Led venga gestito correttamente quando l'Inceneritore e' in fase di burning.
+	<br>
+	<li>Il test viene superato se le condizioni sono rispettate</li>
+	<li>Il test fallisce se le condizioni non vengono rispettate</li>
+
+	<br>
+	<h3>Test funzionale</h3>
+    Il test controlla che quando il WasteStorage non e' vuoto e l'AshStorage non e' pieno, i rifiuti vengono bruciati e la cenere nell'Ash storage incrementa.
+	<br>
+	<li>Il test viene superato se le condizioni sono rispettate</li>
+	<li>Il test fallisce se le condizioni non vengono rispettate</li>
+
+</div>
+
+<h2>Project</h2> 
+<div class="remark">
+	<a href="../src/Sprint2.qak">Sprint2</a>
+	<a href="../../MonitoringDeviceSprint2/src/monitoring.qak">Monitoring</a>
+	<br></br>
+	<h3>Architettura logica</h3>
+            <img src="./sprintduearch.png">
+			
+	<br>
+	<h3>Architettura Monitoring Device</h3>
+			<img src="./monitoringarch.png">
+	<br><br>
+</div>
+
+<h2>Testing</h2> 
+<div class="remark">
+	<a href="../../Sprint2/src/main/java/test/functionaltest.java">Test Funzionale</a>:
+            controlla il corretto funzionamento del sistema alla simulazione dell'aggiunta di peso nel contenitore WasteStorage -> se il valore delle ceneri nell'AshStorage aumenta  e' corretto
+    <br></br>
+	<a href="../../Sprint1/src/main/java/test/scaletest.java">Test Scale</a>:
+			controlla che il WasteStorage percepisca l'aggiunta di un RP alla Scale
+	<br></br>
+	<a href="../../MonitoringDeviceSprint2/src/main/java/test/TestAsh.java">Test Ash</a>:
+			viene verificato che il livello di cenere diminuisca correttamente, e che il comportamento del LED segua le regole di monitoraggio, rispondendo con esito positivo o negativo.
+	<br></br>
+	<a href="../../MonitoringDeviceSprint2/src/main/java/test/TestLed.java">Test Led</a>:
+			viene controllato il monitoring_device, aspettando aggiornamenti sull'inceneritore e il conseguente comportamento del led. Quando riceve un nuovo stato, verifica se corrisponde alle condizioni previste (brucia attivo o inattivo) e se il led rispetta le condizioni, rispondendo con un esito di test (ok o no).
+			
+</div>
+
+<!--<h2>Deployment</h2> -->
+
+ 
+<h2>Prossimi Sviluppi</h2> 
+<strong>SPRINT3:</strong> Analisi del problema per la GUI
+
+ 
+<!-- USEFUL
+<table style="width:100%" border="1">
+<tr>
+<td style="width:50%">
+</td>
+<td></td>
+</tr>
+</table>
+-->
+	      	
+<br/><br/> 	
+</div>  
+
+<div style="background-color:rgba(86, 56, 253, 0.9);text-align:left;color:white">
+	<div>By Michele Armillotta email: michele.armillotta2@studio.unibo.it
+		<img src="./michele.jpeg" alt="mic" width="15%" height="10%">
+	</div> <br>
+	<div>By Nicole Giulianelli email: nicole.giulianelli@studio.unibo.it
+		<img src="./nicole.png" alt="mbot" width="15%" height="15%">
+	</div> <br>
+	
+	GIT repo: https://github.com/NicoleGiulianelli2/TemaFinale2024 <br>
+</div>
+</body>
+</html>

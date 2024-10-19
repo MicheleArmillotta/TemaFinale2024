@@ -30,7 +30,7 @@ class Scale ( name: String, scope: CoroutineScope, isconfined: Boolean=false  ) 
 					action { //it:State
 						CommUtils.outblack("scale | ready")
 						delay(1000) 
-						subscribeToLocalActor("wastestorage_device") 
+						subscribeToLocalActor("scale_device") 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -40,19 +40,21 @@ class Scale ( name: String, scope: CoroutineScope, isconfined: Boolean=false  ) 
 				}	 
 				state("work") { //this:State
 					action { //it:State
+						CommUtils.outblack("$name | waits ... ")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t022",targetState="handlescaledata",cond=whenEvent("scaledata"))
-					transition(edgeName="t023",targetState="handlepolling",cond=whenRequest("pollingRP"))
+					 transition(edgeName="t025",targetState="handlescaledata",cond=whenEvent("scaledata"))
+					transition(edgeName="t026",targetState="handlepolling",cond=whenRequest("pollingRP"))
+					transition(edgeName="t027",targetState="handlepick",cond=whenDispatch("pickRP"))
 				}	 
 				state("handlescaledata") { //this:State
 					action { //it:State
 						CommUtils.outyellow("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
 						 	   
-						if( checkMsgContent( Term.createTerm("weight(D)"), Term.createTerm("weight(D)"), 
+						if( checkMsgContent( Term.createTerm("scaledata(D)"), Term.createTerm("scaledata(D)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								CommUtils.outmagenta("$name | weight=${payloadArg(0)}")
 								 RP_number = RP_number + 1   
@@ -67,11 +69,25 @@ class Scale ( name: String, scope: CoroutineScope, isconfined: Boolean=false  ) 
 				}	 
 				state("handlepolling") { //this:State
 					action { //it:State
+						CommUtils.outblack("scale | polling request from WIS")
+						answer("pollingRP", "numberRP", "numberRP($RP_number)"   )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition( edgeName="goto",targetState="work", cond=doswitch() )
+				}	 
+				state("handlepick") { //this:State
+					action { //it:State
+						CommUtils.outmagenta("$name | pick request from robot, the RP number is $RP_number")
+						 RP_number = RP_number - 1  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
 			}
 		}
