@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waste Management System Status</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: center;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .status {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <h1>Current Status of Waste Management System</h1>
+    <button onclick="connect()">Connect</button>
+    
+    <table id="data-table">
+        <tr>
+            <th>Info</th>
+            <th>Value</th>
+        </tr>
+        <tr>
+            <td>Waste Storage</td>
+            <td id="waste-storage">Loading...</td>
+        </tr>
+        <tr>
+            <td>Ash Storage</td>
+            <td id="ash-storage">Loading...</td>
+        </tr>
+        <tr>
+            <td>Incinerator Status</td>
+            <td id="incinerator-status">Loading...</td>
+        </tr>
+        <tr>
+            <td>OpRobot Location</td>
+            <td id="robot-location">Loading...</td>
+        </tr>
+        <tr>
+            <td>OpRobot Job</td>
+            <td id="robot-job">Loading...</td>
+        </tr>
+    </table>
+
+    <script>
+        let socket;
+
+        function connect() {
+            // Sostituisci l'URL con l'indirizzo del server WebSocket
+            socket = new WebSocket('ws://localhost:8080');
+
+            socket.addEventListener('open', function () {
+                console.log('Connected to WebSocket server');
+                document.getElementById('waste-storage').textContent = "Connected";
+            });
+
+            socket.addEventListener('message', function (event) {
+                const data = JSON.parse(event.data);
+
+                // Assumi che i dati contengano proprietà 'wasteStorage', 'ashStorage', 'incineratorStatus', 'robotLocation', 'robotJob'
+                document.getElementById('waste-storage').textContent = data.wasteStorage + ' RP';
+                document.getElementById('ash-storage').textContent = data.ashStorage;
+                document.getElementById('incinerator-status').textContent = data.incineratorStatus;
+                document.getElementById('robot-location').textContent = data.robotLocation;
+                document.getElementById('robot-job').textContent = data.robotJob;
+            });
+
+            socket.addEventListener('close', function () {
+                console.log('Disconnected from WebSocket server');
+                document.getElementById('waste-storage').textContent = "Disconnected";
+            });
+
+            socket.addEventListener('er
