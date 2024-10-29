@@ -1,5 +1,5 @@
 %====================================================================================
-% sprintdue description   
+% sprint3 description   
 %====================================================================================
 event( burnEnd, burnEnd(N) ).
 dispatch( activation_command, activation_command(N) ).

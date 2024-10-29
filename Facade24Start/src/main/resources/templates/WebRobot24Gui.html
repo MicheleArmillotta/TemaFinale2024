@@ -10,6 +10,9 @@
             margin: 20px;
             padding: 20px;
         }
+        h1 {
+            text-align: center;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -26,6 +29,10 @@
         .status {
             font-weight: bold;
             color: #4CAF50;
+        }
+        #chart-container {
+            width: 100%;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -54,17 +61,60 @@
             <td>OpRobot Location</td>
             <td id="robot-location">Loading...</td>
         </tr>
-        <tr>
-            <td>OpRobot Job</td>
-            <td id="robot-job">Loading...</td>
-        </tr>
     </table>
 
+    <div id="chart-container">
+        <canvas id="distance-chart"></canvas>
+    </div>
+	<script src="guimain.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
     <script>
         let socket;
+        const distanceData = [];
+        
+        // Configurazione del grafico
+        const ctx = document.getElementById('distance-chart').getContext('2d');
+        const distanceChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: 'Distance',
+                    data: distanceData,
+                    borderColor: 'green',
+                    backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'second'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        }
+                    },
+                    y: {
+                        min: 0,
+                        max: 80,
+                        reverse: true, // Invertire l'asse Y
+                        title: {
+                            display: true,
+                            text: 'Distance'
+                        }
+                    }
+                }
+            }
+        });
 
-        function connect() {
-            // Sostituisci l'URL con l'indirizzo del server WebSocket
+       function connect() {
+            // Modifica l'URL per puntare al tuo server WebSocket
             socket = new WebSocket('ws://localhost:8080');
 
             socket.addEventListener('open', function () {
@@ -72,20 +122,52 @@
                 document.getElementById('waste-storage').textContent = "Connected";
             });
 
-            socket.addEventListener('message', function (event) {
-                const data = JSON.parse(event.data);
+       socket.addEventListener('message', function (event) {
+    const dataText = event.data;
 
-                // Assumi che i dati contengano proprietà 'wasteStorage', 'ashStorage', 'incineratorStatus', 'robotLocation', 'robotJob'
-                document.getElementById('waste-storage').textContent = data.wasteStorage + ' RP';
-                document.getElementById('ash-storage').textContent = data.ashStorage;
-                document.getElementById('incinerator-status').textContent = data.incineratorStatus;
-                document.getElementById('robot-location').textContent = data.robotLocation;
-                document.getElementById('robot-job').textContent = data.robotJob;
-            });
+    // Parsing della stringa per estrarre i dati
+    const wasteStorageMatch = dataText.match(/numero RP: (\d+)/);
+    const inciStatusMatch = dataText.match(/incinerator: (\w+)/);
+    const robotLocationMatch = dataText.match(/robot: (\w+)/);
+    const ashStorageMatch = dataText.match(/ash: (\d+)/);
+
+    // Aggiorna la tabella con i dati estratti
+    if (wasteStorageMatch) {
+        document.getElementById('waste-storage').textContent = wasteStorageMatch[1] + ' RP';
+    }
+    if (ashStorageMatch) {
+        document.getElementById('ash-storage').textContent = ashStorageMatch[1] + '%';
+    }
+    if (inciStatusMatch) {
+        document.getElementById('incinerator-status').textContent = inciStatusMatch[1];
+    }
+    if (robotLocationMatch) {
+        document.getElementById('robot-location').textContent = robotLocationMatch[1];
+    }
+
+    // Dato di esempio per il grafico (WasteStorage)
+    if (wasteStorageMatch) {
+        updateChart(Number(wasteStorageMatch[1]));
+    }
+});
+
 
             socket.addEventListener('close', function () {
                 console.log('Disconnected from WebSocket server');
                 document.getElementById('waste-storage').textContent = "Disconnected";
             });
 
-            socket.addEventListener('er
+            socket.addEventListener('error', function (error) {
+                console.error('WebSocket error:', error);
+            });
+        }
+
+        // Funzione per aggiornare il grafico con nuovi dati di distanza
+        function updateChart(distance) {
+            const now = new Date();
+            distanceChart.data.datasets[0].data.push({ x: now, y: distance });
+            distanceChart.update();
+        }
+    </script>
+</body>
+</html>
