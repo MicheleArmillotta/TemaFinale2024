@@ -10,8 +10,7 @@ Event sonardata    : sonardata(D)   //emitted  by sonardevice
 Dispatch ledOn : ledOn(X)
 Dispatch ledOff : ledOff(X)
 Dispatch ledBlink : ledBlink(X)
-
-
+Dispatch valAsh : valAsh(X)
 //WIS -> monitoring_device
 
 Request pollingAsh : pollingAsh(X)
@@ -27,9 +26,10 @@ Dispatch sonar_value:sonar_value(X)
 
 
 Context ctxmonitor ip [ host= "localhost" port= 8128 ]
-//Context ctxsprintdue ip [host="127.0.0.1" port=8080]
+Context ctxsprintdue ip [host="127.0.0.1" port=8080]
 
-//ExternalQActor wis context ctxsprintdue 
+ExternalQActor wis context ctxsprintdue 
+ExternalQActor observedactor context ctxsprintdue
 
 QActor monitoring_device context ctxmonitor{
 	[#
@@ -61,7 +61,7 @@ QActor monitoring_device context ctxmonitor{
 			[# Ash_level = payloadArg(0).toInt() #]
 			println("Ash_level: $Ash_level") color red
 			
-			
+			forward observedactor -m valAsh : valAsh($Ash_level)
 			if [# Ash_level<=DLIMIT || Ash_level == 1000 #] {
 				forward led -m ledBlink:ledBlink(N)
 			}else {
@@ -132,21 +132,21 @@ QActor led context ctxmonitor{
 				  
 	State handleOn{
 		println("LED ON") color green
-		[# p       = Runtime.getRuntime().exec("python ledOn.py") #]
+		//[# p       = Runtime.getRuntime().exec("python ledOn.py") #]
 	}		
 	
 	Goto idle
 	
 	State handleOff{
 		println("LED OFF") color green
-		[# p1       = Runtime.getRuntime().exec("python edOff.py") #]
+		//[# p1       = Runtime.getRuntime().exec("python edOff.py") #]
 	}	  
 				  
 	Goto idle
 	
 	State handleBlink{
 		println("LED BLINK") color green
-		[# p2       = Runtime.getRuntime().exec("python ledBlink.py") #]
+		//[# p2       = Runtime.getRuntime().exec("python ledBlink.py") #]
 	}
 	
 	Goto idle

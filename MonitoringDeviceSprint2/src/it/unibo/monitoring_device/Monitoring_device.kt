@@ -56,6 +56,7 @@ class Monitoring_device ( name: String, scope: CoroutineScope, isconfined: Boole
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 Ash_level = payloadArg(0).toInt()  
 								CommUtils.outred("Ash_level: $Ash_level")
+								forward("valAsh", "valAsh($Ash_level)" ,"observedactor" ) 
 								if(  Ash_level<=DLIMIT || Ash_level == 1000  
 								 ){forward("ledBlink", "ledBlink(N)" ,"led" ) 
 								}

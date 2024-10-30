@@ -30,7 +30,11 @@ with Diagram('monitoringArch', show=False, outformat='png', graph_attr=graphattr
           led=Custom('led','./qakicons/symActorSmall.png')
           sonar=Custom('sonar','./qakicons/symActorSmall.png')
           sonar_device=Custom('sonar_device','./qakicons/symActorSmall.png')
+     with Cluster('ctxsprintdue', graph_attr=nodeattr):
+          wis=Custom('wis(ext)','./qakicons/externalQActor.png')
+          observedactor=Custom('observedactor(ext)','./qakicons/externalQActor.png')
      sonar_device >> Edge( label='sonardata', **eventedgeattr, decorate='true', fontcolor='red') >> sonar
      sonar >> Edge(color='blue', style='solid',  decorate='true', label='<sonar_value &nbsp; >',  fontcolor='blue') >> monitoring_device
+     monitoring_device >> Edge(color='blue', style='solid',  decorate='true', label='<valAsh &nbsp; >',  fontcolor='blue') >> observedactor
      monitoring_device >> Edge(color='blue', style='solid',  decorate='true', label='<ledBlink &nbsp; ledOn &nbsp; ledOff &nbsp; >',  fontcolor='blue') >> led
 diag

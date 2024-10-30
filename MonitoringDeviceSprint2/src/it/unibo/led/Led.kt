@@ -53,7 +53,6 @@ class Led ( name: String, scope: CoroutineScope, isconfined: Boolean=false  ) : 
 				state("handleOn") { //this:State
 					action { //it:State
 						CommUtils.outgreen("LED ON")
-						 p       = Runtime.getRuntime().exec("python ledOn.py")  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -64,7 +63,6 @@ class Led ( name: String, scope: CoroutineScope, isconfined: Boolean=false  ) : 
 				state("handleOff") { //this:State
 					action { //it:State
 						CommUtils.outgreen("LED OFF")
-						 p1       = Runtime.getRuntime().exec("python edOff.py")  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -75,7 +73,6 @@ class Led ( name: String, scope: CoroutineScope, isconfined: Boolean=false  ) : 
 				state("handleBlink") { //this:State
 					action { //it:State
 						CommUtils.outgreen("LED BLINK")
-						 p2       = Runtime.getRuntime().exec("python ledBlink.py")  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
