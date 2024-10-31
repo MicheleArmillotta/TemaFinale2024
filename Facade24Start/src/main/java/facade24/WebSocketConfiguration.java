@@ -9,7 +9,7 @@ import unibo.basicomm23.utils.CommUtils;
 @EnableWebSocket
 public class WebSocketConfiguration implements WebSocketConfigurer {
 
-    public final String wsPath  = "accessgui";
+    public final String wsPath  = "WebRobot24Gui";
 
     public WebSocketConfiguration(){
         //Inovocato alla CONNESSIONE
