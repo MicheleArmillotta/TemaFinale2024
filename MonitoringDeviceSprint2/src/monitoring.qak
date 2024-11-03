@@ -24,6 +24,10 @@ Dispatch turnLedOff : turnLedOff(X)
 
 Dispatch sonar_value:sonar_value(X)
 
+//op robot -> sonar device (mock)
+
+Dispatch deposit_ash:deposit_ash(X)
+
 
 Context ctxmonitor ip [ host= "localhost" port= 8128 ]
 Context ctxsprintdue ip [host="127.0.0.1" port=8080]
@@ -192,38 +196,33 @@ QActor sonar_device context ctxmonitor{  //mock
 		emitlocalstream sonardata:sonardata($K)
 	}
 	
+	Goto idle
 	
-	Goto half_empty
-	
-	
-	State half_empty{
-		delay 30000
-		[# K= 500 #]  //empty
-		delay 1500
-		emitlocalstream sonardata:sonardata($K)
+	State idle{
+		println("sonar_device waiting..") color yellow
 	}
 	
+	Transition t0 whenTime 80000 -> gatherAsh
+					whenMsg deposit_ash -> handleAsh
+				  
 	
-	Goto full
-	
-	
-	State full{
-		delay 30000
-		[# K= 0 #]  //empty
-		delay 1500
+	State handleAsh{
+		
+		[# K= K - 200 #]  //robot da ash
+		println("ASH = $K") color yellow
 		emitlocalstream sonardata:sonardata($K)
+		
 	}
 	
+	Goto idle
 	
-	Goto empty
-	
-	
-	State empty{
-		delay 30000
-		[# K= 1000 #]  //empty
-		delay 1500
+	State gatherAsh{
+		
+		[# K= 1000 #]
+		println("ASH vuoto") color yellow
 		emitlocalstream sonardata:sonardata($K)
 	}
+				  
+	Goto idle	  
 	
-	Goto half_empty
 }

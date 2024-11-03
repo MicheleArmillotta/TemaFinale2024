@@ -34,46 +34,44 @@ class Sonar_device ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="half_empty", cond=doswitch() )
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
 				}	 
-				state("half_empty") { //this:State
+				state("idle") { //this:State
 					action { //it:State
-						delay(30000) 
-						 K= 500  
-						delay(1500) 
+						CommUtils.outyellow("sonar_device waiting..")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+				 	 		stateTimer = TimerActor("timer_idle", 
+				 	 					  scope, context!!, "local_tout_"+name+"_idle", 80000.toLong() )  //OCT2023
+					}	 	 
+					 transition(edgeName="t09",targetState="gatherAsh",cond=whenTimeout("local_tout_"+name+"_idle"))   
+					transition(edgeName="t010",targetState="handleAsh",cond=whenDispatch("deposit_ash"))
+				}	 
+				state("handleAsh") { //this:State
+					action { //it:State
+						 K= K - 200  
+						CommUtils.outyellow("ASH = $K")
 						emitLocalStreamEvent("sonardata", "sonardata($K)" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="full", cond=doswitch() )
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
 				}	 
-				state("full") { //this:State
+				state("gatherAsh") { //this:State
 					action { //it:State
-						delay(30000) 
-						 K= 0  
-						delay(1500) 
-						emitLocalStreamEvent("sonardata", "sonardata($K)" ) 
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="empty", cond=doswitch() )
-				}	 
-				state("empty") { //this:State
-					action { //it:State
-						delay(30000) 
 						 K= 1000  
-						delay(1500) 
+						CommUtils.outyellow("ASH vuoto")
 						emitLocalStreamEvent("sonardata", "sonardata($K)" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="half_empty", cond=doswitch() )
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
 				}	 
 			}
 		}

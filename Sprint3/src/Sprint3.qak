@@ -42,6 +42,10 @@ Reply valueAsh : valueAsh(X) for pollingAsh
 
 Dispatch pickRP : pickRP(X)
 
+//op robot -> sonar device
+
+Dispatch deposit_ash:deposit_ash(X)
+
 
 //WIS -> monitoring device
 Dispatch turnLedOn : turnLedOn(X)
@@ -58,6 +62,7 @@ Context ctxmonitor ip [host="127.0.0.1"  port=8128]
 
 ExternalQActor basicrobot context ctxbasicrobot
 ExternalQActor monitoring_device context ctxmonitor
+ExternalQActor sonar_device context ctxmonitor
 
 
 QActor wis context ctxsprintdue{
@@ -355,6 +360,7 @@ QActor oprobot context ctxsprintdue{
  	  	println("opRobot in AshOUT going to HOME...") color yellow
  	  	println("RESTARTING THE ROUTINE...") color red
  		[# Position = "ASHOUT" #]
+ 		forward sonar_device -m deposit_ash : deposit_ash(X) //mock deposit
  		forward observedactor -m statoOp : statoOp(deposit_ash)
  		delay 2000 //deposit time
  		updateResource [# "info($State, $Position)" #] 

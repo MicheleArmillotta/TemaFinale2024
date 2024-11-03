@@ -4,3 +4,4 @@
 {"actor":"led", "msgType":"dispatch", "curstate":"idle", "nextstate":"handleOn", "msgId":"ledOn"}
 {"actor":"led", "msgType":"dispatch", "curstate":"idle", "nextstate":"handleOff", "msgId":"ledOff"}
 {"actor":"led", "msgType":"dispatch", "curstate":"idle", "nextstate":"handleBlink", "msgId":"ledBlink"}
+{"actor":"sonar_device", "msgType":"dispatch", "curstate":"idle", "nextstate":"handleAsh", "msgId":"deposit_ash"}

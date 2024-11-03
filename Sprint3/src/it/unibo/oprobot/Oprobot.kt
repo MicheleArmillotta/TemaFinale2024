@@ -171,6 +171,7 @@ class Oprobot ( name: String, scope: CoroutineScope, isconfined: Boolean=false  
 						CommUtils.outyellow("opRobot in AshOUT going to HOME...")
 						CommUtils.outred("RESTARTING THE ROUTINE...")
 						 Position = "ASHOUT"  
+						forward("deposit_ash", "deposit_ash(X)" ,"sonar_device" ) 
 						forward("statoOp", "statoOp(deposit_ash)" ,"observedactor" ) 
 						delay(2000) 
 						updateResourceRep( "info($State, $Position)"  

@@ -22,6 +22,7 @@ reply( numberRP, numberRP(X) ).  %%for pollingRP
 request( pollingAsh, pollingAsh(X) ).
 reply( valueAsh, valueAsh(X) ).  %%for pollingAsh
 dispatch( pickRP, pickRP(X) ).
+dispatch( deposit_ash, deposit_ash(X) ).
 dispatch( turnLedOn, turnLedOn(X) ).
 dispatch( turnLedOff, turnLedOff(X) ).
 %====================================================================================
@@ -30,6 +31,7 @@ context(ctxbasicrobot, "127.0.0.1",  "TCP", "8020").
 context(ctxmonitor, "127.0.0.1",  "TCP", "8128").
  qactor( basicrobot, ctxbasicrobot, "external").
   qactor( monitoring_device, ctxmonitor, "external").
+  qactor( sonar_device, ctxmonitor, "external").
   qactor( wis, ctxsprintdue, "it.unibo.wis.Wis").
  static(wis).
   qactor( incinerator, ctxsprintdue, "it.unibo.incinerator.Incinerator").

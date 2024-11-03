@@ -11,6 +11,7 @@ reply( valueAsh, valueAsh(X) ).  %%for pollingAsh
 dispatch( turnLedOn, turnLedOn(X) ).
 dispatch( turnLedOff, turnLedOff(X) ).
 dispatch( sonar_value, sonar_value(X) ).
+dispatch( deposit_ash, deposit_ash(X) ).
 %====================================================================================
 context(ctxmonitor, "localhost",  "TCP", "8128").
 context(ctxsprintdue, "127.0.0.1",  "TCP", "8080").
