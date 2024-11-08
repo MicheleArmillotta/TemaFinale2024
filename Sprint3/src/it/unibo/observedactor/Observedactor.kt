@@ -43,6 +43,8 @@ class Observedactor ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 						CommUtils.outgreen("$name READY")
 						updateResourceRep( "$name	INFO:	numero RP: $WasteStorage incinerator: $InciStatus	robot: $OpRobot	ash: $AshStorage"  
 						)
+						updateResourceRep( "data($WasteStorage, $InciStatus, $OpRobot, $AshSTorage)"  
+						)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -64,6 +66,8 @@ class Observedactor ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 						CommUtils.outblack("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
 						updateResourceRep( "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage"  
 						)
+						updateResourceRep( "data($WasteStorage, $InciStatus, $OpRobot, $AshSTorage)"  
+						)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -83,6 +87,8 @@ class Observedactor ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 						}
 						CommUtils.outblack("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
 						updateResourceRep( "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage"  
+						)
+						updateResourceRep( "data($WasteStorage, $InciStatus, $OpRobot, $AshSTorage)"  
 						)
 						//genTimer( actor, state )
 					}
@@ -104,6 +110,8 @@ class Observedactor ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 						CommUtils.outblack("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
 						updateResourceRep( "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage"  
 						)
+						updateResourceRep( "data($WasteStorage, $InciStatus, $OpRobot, $AshSTorage)"  
+						)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -123,6 +131,8 @@ class Observedactor ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 						}
 						CommUtils.outblack("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
 						updateResourceRep( "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage"  
+						)
+						updateResourceRep( "data($WasteStorage, $InciStatus, $OpRobot, $AshSTorage)"  
 						)
 						//genTimer( actor, state )
 					}

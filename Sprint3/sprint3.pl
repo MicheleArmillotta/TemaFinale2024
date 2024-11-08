@@ -10,6 +10,7 @@ reply( engagedone, engagedone(ARG) ).  %%for engage
 reply( engagerefused, engagerefused(ARG) ).  %%for engage
 request( moverobot, moverobot(TARGETX,TARGETY) ).
 dispatch( info, info(X,Y) ).
+dispatch( data, data(X,Y,Z,K) ).
 dispatch( numRP, numRP(X) ).
 dispatch( statoIn, statoIn(N) ).
 dispatch( statoOp, statoOp(N) ).
@@ -25,6 +26,8 @@ dispatch( pickRP, pickRP(X) ).
 dispatch( deposit_ash, deposit_ash(X) ).
 dispatch( turnLedOn, turnLedOn(X) ).
 dispatch( turnLedOff, turnLedOff(X) ).
+request( start_test, start_test(X) ).
+reply( start_test_reply, start_test_reply(X) ).  %%for start_test
 %====================================================================================
 context(ctxsprintdue, "localhost",  "TCP", "8080").
 context(ctxbasicrobot, "127.0.0.1",  "TCP", "8020").
@@ -44,3 +47,5 @@ context(ctxmonitor, "127.0.0.1",  "TCP", "8128").
  static(scale_device).
   qactor( observedactor, ctxsprintdue, "it.unibo.observedactor.Observedactor").
  static(observedactor).
+  qactor( test_observer, ctxsprintdue, "it.unibo.test_observer.Test_observer").
+ static(test_observer).

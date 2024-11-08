@@ -32,6 +32,7 @@ with Diagram('sprint3Arch', show=False, outformat='png', graph_attr=graphattr) a
           scale=Custom('scale','./qakicons/symActorSmall.png')
           scale_device=Custom('scale_device','./qakicons/symActorSmall.png')
           observedactor=Custom('observedactor','./qakicons/symActorSmall.png')
+          test_observer=Custom('test_observer','./qakicons/symActorSmall.png')
      with Cluster('ctxbasicrobot', graph_attr=nodeattr):
           basicrobot=Custom('basicrobot(ext)','./qakicons/externalQActor.png')
      with Cluster('ctxmonitor', graph_attr=nodeattr):
@@ -49,6 +50,7 @@ with Diagram('sprint3Arch', show=False, outformat='png', graph_attr=graphattr) a
      oprobot >> Edge(color='blue', style='solid',  decorate='true', label='<statoOp &nbsp; >',  fontcolor='blue') >> observedactor
      wis >> Edge(color='blue', style='solid',  decorate='true', label='<activation_command &nbsp; startBurn &nbsp; >',  fontcolor='blue') >> incinerator
      wis >> Edge(color='blue', style='solid',  decorate='true', label='<startRobot &nbsp; >',  fontcolor='blue') >> oprobot
+     observedactor >> Edge(color='blue', style='solid',  decorate='true', label='<data &nbsp; >',  fontcolor='blue') >> test_observer
      wis >> Edge(color='blue', style='solid',  decorate='true', label='<turnLedOn &nbsp; turnLedOff &nbsp; >',  fontcolor='blue') >> monitoring_device
      oprobot >> Edge(color='blue', style='solid',  decorate='true', label='<deposit_ash &nbsp; >',  fontcolor='blue') >> sonar_device
      scale >> Edge(color='blue', style='solid',  decorate='true', label='<numRP &nbsp; >',  fontcolor='blue') >> observedactor

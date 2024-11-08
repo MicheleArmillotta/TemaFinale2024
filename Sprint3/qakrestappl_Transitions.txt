@@ -25,3 +25,4 @@
 {"actor":"observedactor", "msgType":"dispatch", "curstate":"handle_Ash", "nextstate":"handle_rp", "msgId":"numRP"}
 {"actor":"observedactor", "msgType":"dispatch", "curstate":"handle_Ash", "nextstate":"handle_Inci", "msgId":"statoIn"}
 {"actor":"observedactor", "msgType":"dispatch", "curstate":"handle_Ash", "nextstate":"handle_Ash", "msgId":"valAsh"}
+{"actor":"test_observer", "msgType":"dispatch", "curstate":"handleStart", "nextstate":"handle_data", "msgId":"data"}
