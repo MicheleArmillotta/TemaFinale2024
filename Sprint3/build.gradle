@@ -124,6 +124,15 @@ dependencies {
 
     
     //USER libs for facades
+    implementation 'net.sourceforge.htmlunit:htmlunit:2.70.0'
+    implementation 'commons-logging:commons-logging:1.2' // o la versione appropriata
+    implementation 'org.slf4j:slf4j-simple:1.7.36' // o l'ultima versione disponibile
+    
+    implementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
+    implementation 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+    implementation 'org.seleniumhq.selenium:selenium-java:4.3.0'
+    implementation 'io.github.bonigarcia:webdrivermanager:5.3.0'
+    
     
 }
 	
@@ -185,6 +194,8 @@ task run0(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'it.unibo.ctxsprintdue.MainCtxsprintdueKt'
 }
+
+
 
 /*
 //TODO

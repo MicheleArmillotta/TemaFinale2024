@@ -1,0 +1,240 @@
+System sprint3
+
+
+//updateResources
+//Dispatch updatePosition : updatePosition(WasteStorage, AshStorage, StatoIncinerator, OpRobot Stato )
+Dispatch info : info(X, Y)
+Dispatch data : data(X,Y,Z,K)
+
+//Dispatch info2 : info2(X, Y, X, Y)
+
+Dispatch numRP : numRP(X)
+Dispatch statoIn : statoIn(N)
+Dispatch statoOp : statoOp(N)
+Dispatch valAsh : valAsh(X)
+
+
+
+
+
+
+
+
+
+//TEST MESSAGES
+
+//TEST MESSAGES
+
+Request start_test : start_test(X)
+Reply start_test_reply : start_test_reply(X) for start_test
+
+
+
+
+
+//context
+
+Context ctxsprintdue ip [host="localhost" port=8080]
+
+
+
+
+
+
+QActor observedactor context ctxsprintdue{
+	[#
+		var WasteStorage = 0;
+		var AshStorage = 0;
+		var InciStatus = "spento";
+		var OpRobot = "home";
+		
+	#]
+	
+	
+	State s0 initial{
+		println("$name attivo") color blue
+		delay 500
+	}
+	Goto ready
+	
+	State ready {
+		println("$name READY") color green
+		//updateResource[# "$name	INFO:	numero RP: $WasteStorage incinerator: $InciStatus	robot: $OpRobot	ash: $AshStorage" #]
+		//updateResource[# "data($WasteStorage, $InciStatus, $OpRobot, $AshStorage)" #]
+	
+	}
+	
+	Transition t1 whenMsg numRP -> handle_rp
+				  whenMsg statoIn -> handle_Inci
+				  whenMsg statoOp -> handle_Op
+				  whenMsg valAsh -> handle_Ash
+				
+				  
+	State handle_rp{
+		println("$name aggiorno stato di WasteStorage")
+		
+		
+		
+		onMsg(numRP:numRP(X)){
+			[# var kg = payloadArg(0).toInt()
+				WasteStorage = kg // 50
+			 #]
+		}
+		println("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
+		//updateResource[# "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage" #]
+	   
+			
+	    updateResource[# "data($WasteStorage, $InciStatus, $OpRobot, $AshStorage)" #]
+	    	
+	   
+	}
+	
+	Transition t1 whenMsg numRP -> handle_rp
+				  whenMsg statoIn -> handle_Inci
+				  whenMsg statoOp -> handle_Op
+				  whenMsg valAsh -> handle_Ash
+				  
+				  
+	State handle_Inci{
+		
+		println("$name aggiorno stato di Incinerator")
+		
+		onMsg(statoIn:statoIn(N)){
+			[# InciStatus = payloadArg(0) #]
+		}
+		println("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
+		//updateResource[# "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage" #]
+		
+			
+	    updateResource[# "data($WasteStorage, $InciStatus, $OpRobot, $AshStorage)" #]
+	    	
+	  
+	}
+	
+	Transition t1 whenMsg numRP -> handle_rp
+				  whenMsg statoIn -> handle_Inci
+				  whenMsg statoOp -> handle_Op
+				  whenMsg valAsh -> handle_Ash
+				  
+				  
+	State handle_Op{
+		println("$name aggiorno stato di OpRobot")
+		
+		onMsg(statoOp:statoOp(N)){
+			[# OpRobot = payloadArg(0) #]
+		}
+		println("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
+		//updateResource[# "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage" #]
+		
+			
+	    updateResource[# "data($WasteStorage, $InciStatus, $OpRobot, $AshStorage)" #]
+	    	
+	
+	}
+	
+	Transition t0 whenMsg statoOp -> handle_Op
+				  whenMsg numRP -> handle_rp
+				  whenMsg statoIn -> handle_Inci
+				  whenMsg valAsh -> handle_Ash
+				  
+	State handle_Ash{
+		println("$name aggiorno stato di AshStorage")
+		
+		onMsg(valAsh:valAsh(X)){
+			[# AshStorage = payloadArg(0).toInt() #]
+		}
+		println("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
+		//updateResource[# "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage" #]
+		
+			
+	    updateResource[# "data($WasteStorage, $InciStatus, $OpRobot, $AshStorage)" #]
+	    	
+	   
+	}
+	
+	Transition t0 whenMsg statoOp -> handle_Op
+				  whenMsg numRP -> handle_rp
+				  whenMsg statoIn -> handle_Inci
+				  whenMsg valAsh -> handle_Ash
+}
+
+
+
+
+//TEST GUI
+
+
+//TEST OBSERVER
+
+QActor test_observer context ctxsprintdue{
+	[# var RP = 2 
+	   var Inc = "acceso"
+	   var Ash = 500
+	   var Op = "HOME"
+	   var RP_new = 0 
+	   var Inc_new = "" 
+	   var Ash_new = 0 	
+	   var Op_new = ""
+	#]
+	
+	
+	State s0 initial{
+		println("START TEST") color red
+		delay 1000
+		observeResource observedactor msgid data
+	}
+	
+	Transition t1 whenRequest start_test -> handleStart
+	
+	State handleStart{
+		println("HANDLE START!!!!") color red
+		delay 2000
+		forward observedactor -m numRP : numRP($RP)
+		forward observedactor -m statoIn : statoIn($Inc)
+		forward observedactor -m valAsh : valAsh($Ash)
+		forward observedactor -m statoOp : statoOp($Op)
+		delay 5000
+	}
+	
+	Transition t2 whenMsg data -> discard1
+	
+	State discard1{}
+	
+	Transition t2 whenMsg data -> discard2
+	
+	State discard2{}
+	
+	Transition t2 whenMsg data -> discard3
+	
+	State discard3{}
+	
+	Transition t2 whenMsg data -> handle_data
+	
+	State handle_data{
+		println("HANDLE DATA!!!!") color red
+		onMsg( data : data(X,Y,Z,K) ){
+			[# RP_new = payloadArg(0).toInt()
+			   Inc_new = payloadArg(1)
+			   Ash_new = payloadArg(3).toInt()	
+			   Op_new = payloadArg(2)
+			   
+			#]
+			
+			}
+			
+			[#
+			if(RP == RP_new && Inc == Inc_new && Ash == Ash_new && Op == Op_new){
+		#]
+			replyTo start_test with start_test_reply : start_test_reply(ok)
+		[#
+		}else{
+		#]
+			replyTo start_test with start_test_reply : start_test_reply(notok)
+		[#
+		}
+		#]
+		
+		
+	}
+	
+}

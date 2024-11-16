@@ -21,11 +21,14 @@ class Test_observer ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		//val interruptedStateTransitions = mutableListOf<Transition>()
-		 var RP = 0 
-			   var Inc = ""
-			   var Ash = 0
-			   var Op = ""
-			   var result = ""
+		 var RP = 2 
+			   var Inc = "acceso"
+			   var Ash = 500
+			   var Op = "HOME"
+			   var RP_new = 0 
+			   var Inc_new = "" 
+			   var Ash_new = 0 	
+			   var Op_new = ""
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -37,29 +40,70 @@ class Test_observer ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t148",targetState="handleStart",cond=whenRequest("start_test"))
+					 transition(edgeName="t120",targetState="handleStart",cond=whenRequest("start_test"))
 				}	 
 				state("handleStart") { //this:State
 					action { //it:State
+						CommUtils.outred("HANDLE START!!!!")
+						delay(2000) 
+						forward("numRP", "numRP($RP)" ,"observedactor" ) 
+						forward("statoIn", "statoIn($Inc)" ,"observedactor" ) 
+						forward("valAsh", "valAsh($Ash)" ,"observedactor" ) 
+						forward("statoOp", "statoOp($Op)" ,"observedactor" ) 
 						delay(5000) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t249",targetState="handle_data",cond=whenDispatch("data"))
+					 transition(edgeName="t221",targetState="discard1",cond=whenDispatch("data"))
+				}	 
+				state("discard1") { //this:State
+					action { //it:State
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t222",targetState="discard2",cond=whenDispatch("data"))
+				}	 
+				state("discard2") { //this:State
+					action { //it:State
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t223",targetState="discard3",cond=whenDispatch("data"))
+				}	 
+				state("discard3") { //this:State
+					action { //it:State
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t224",targetState="handle_data",cond=whenDispatch("data"))
 				}	 
 				state("handle_data") { //this:State
 					action { //it:State
+						CommUtils.outred("HANDLE DATA!!!!")
 						if( checkMsgContent( Term.createTerm("data(X,Y,Z,K)"), Term.createTerm("data(X,Y,Z,K)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								 RP = payloadArg(0).toInt()
-											   Inc = payloadArg(1)
-											   Ash = payloadArg(2).toInt()	
-											   Op = payloadArg(3)
-											   var result = "$RP, $Inc, $Ash, $Op"
+								 RP_new = payloadArg(0).toInt()
+											   Inc_new = payloadArg(1)
+											   Ash_new = payloadArg(3).toInt()	
+											   Op_new = payloadArg(2)
+											   
 						}
-						answer("start_test", "start_test_reply", "start_test_reply("$result")"   )  
+						
+									if(RP == RP_new && Inc == Inc_new && Ash == Ash_new && Op == Op_new){
+						answer("start_test", "start_test_reply", "start_test_reply(ok)"   )  
+						
+								}else{
+						answer("start_test", "start_test_reply", "start_test_reply(notok)"   )  
+						
+								}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
