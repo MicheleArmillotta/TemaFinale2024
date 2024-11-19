@@ -1,3 +1,10 @@
+{"actor":"wis", "msgType":"dispatch", "curstate":"wait_message", "nextstate":"manageState", "msgId":"info"}
+{"actor":"wis", "msgType":"dispatch", "curstate":"idle", "nextstate":"managePosition", "msgId":"info"}
+{"actor":"incinerator", "msgType":"dispatch", "curstate":"s0", "nextstate":"start", "msgId":"activation_command"}
+{"actor":"incinerator", "msgType":"dispatch", "curstate":"start", "nextstate":"handleBurn", "msgId":"startBurn"}
+{"actor":"incinerator", "msgType":"dispatch", "curstate":"handleBurn", "nextstate":"handleBurn", "msgId":"startBurn"}
+{"actor":"oprobot", "msgType":"dispatch", "curstate":"home", "nextstate":"handleRP", "msgId":"startRobot"}
+{"actor":"scale", "msgType":"dispatch", "curstate":"work", "nextstate":"handlepick", "msgId":"pickRP"}
 {"actor":"observedactor", "msgType":"dispatch", "curstate":"ready", "nextstate":"handle_rp", "msgId":"numRP"}
 {"actor":"observedactor", "msgType":"dispatch", "curstate":"ready", "nextstate":"handle_Inci", "msgId":"statoIn"}
 {"actor":"observedactor", "msgType":"dispatch", "curstate":"ready", "nextstate":"handle_Op", "msgId":"statoOp"}
@@ -18,7 +25,3 @@
 {"actor":"observedactor", "msgType":"dispatch", "curstate":"handle_Ash", "nextstate":"handle_rp", "msgId":"numRP"}
 {"actor":"observedactor", "msgType":"dispatch", "curstate":"handle_Ash", "nextstate":"handle_Inci", "msgId":"statoIn"}
 {"actor":"observedactor", "msgType":"dispatch", "curstate":"handle_Ash", "nextstate":"handle_Ash", "msgId":"valAsh"}
-{"actor":"test_observer", "msgType":"dispatch", "curstate":"handleStart", "nextstate":"discard1", "msgId":"data"}
-{"actor":"test_observer", "msgType":"dispatch", "curstate":"discard1", "nextstate":"discard2", "msgId":"data"}
-{"actor":"test_observer", "msgType":"dispatch", "curstate":"discard2", "nextstate":"discard3", "msgId":"data"}
-{"actor":"test_observer", "msgType":"dispatch", "curstate":"discard3", "nextstate":"handle_data", "msgId":"data"}

@@ -26,7 +26,6 @@ class Observedactor ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 				var AshStorage = 0;
 				var InciStatus = "spento";
 				var OpRobot = "home";
-				
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -42,15 +41,17 @@ class Observedactor ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 				state("ready") { //this:State
 					action { //it:State
 						CommUtils.outgreen("$name READY")
+						updateResourceRep( "$name	INFO:	numero RP: $WasteStorage incinerator: $InciStatus	robot: $OpRobot	ash: $AshStorage"  
+						)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t10",targetState="handle_rp",cond=whenDispatch("numRP"))
-					transition(edgeName="t11",targetState="handle_Inci",cond=whenDispatch("statoIn"))
-					transition(edgeName="t12",targetState="handle_Op",cond=whenDispatch("statoOp"))
-					transition(edgeName="t13",targetState="handle_Ash",cond=whenDispatch("valAsh"))
+					 transition(edgeName="t128",targetState="handle_rp",cond=whenDispatch("numRP"))
+					transition(edgeName="t129",targetState="handle_Inci",cond=whenDispatch("statoIn"))
+					transition(edgeName="t130",targetState="handle_Op",cond=whenDispatch("statoOp"))
+					transition(edgeName="t131",targetState="handle_Ash",cond=whenDispatch("valAsh"))
 				}	 
 				state("handle_rp") { //this:State
 					action { //it:State
@@ -61,17 +62,17 @@ class Observedactor ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 												WasteStorage = kg // 50
 						}
 						CommUtils.outblack("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
-						updateResourceRep( "data($WasteStorage, $InciStatus, $OpRobot, $AshStorage)"  
+						updateResourceRep( "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage"  
 						)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t14",targetState="handle_rp",cond=whenDispatch("numRP"))
-					transition(edgeName="t15",targetState="handle_Inci",cond=whenDispatch("statoIn"))
-					transition(edgeName="t16",targetState="handle_Op",cond=whenDispatch("statoOp"))
-					transition(edgeName="t17",targetState="handle_Ash",cond=whenDispatch("valAsh"))
+					 transition(edgeName="t132",targetState="handle_rp",cond=whenDispatch("numRP"))
+					transition(edgeName="t133",targetState="handle_Inci",cond=whenDispatch("statoIn"))
+					transition(edgeName="t134",targetState="handle_Op",cond=whenDispatch("statoOp"))
+					transition(edgeName="t135",targetState="handle_Ash",cond=whenDispatch("valAsh"))
 				}	 
 				state("handle_Inci") { //this:State
 					action { //it:State
@@ -81,17 +82,17 @@ class Observedactor ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 								 InciStatus = payloadArg(0)  
 						}
 						CommUtils.outblack("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
-						updateResourceRep( "data($WasteStorage, $InciStatus, $OpRobot, $AshStorage)"  
+						updateResourceRep( "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage"  
 						)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t18",targetState="handle_rp",cond=whenDispatch("numRP"))
-					transition(edgeName="t19",targetState="handle_Inci",cond=whenDispatch("statoIn"))
-					transition(edgeName="t110",targetState="handle_Op",cond=whenDispatch("statoOp"))
-					transition(edgeName="t111",targetState="handle_Ash",cond=whenDispatch("valAsh"))
+					 transition(edgeName="t136",targetState="handle_rp",cond=whenDispatch("numRP"))
+					transition(edgeName="t137",targetState="handle_Inci",cond=whenDispatch("statoIn"))
+					transition(edgeName="t138",targetState="handle_Op",cond=whenDispatch("statoOp"))
+					transition(edgeName="t139",targetState="handle_Ash",cond=whenDispatch("valAsh"))
 				}	 
 				state("handle_Op") { //this:State
 					action { //it:State
@@ -101,17 +102,17 @@ class Observedactor ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 								 OpRobot = payloadArg(0)  
 						}
 						CommUtils.outblack("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
-						updateResourceRep( "data($WasteStorage, $InciStatus, $OpRobot, $AshStorage)"  
+						updateResourceRep( "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage"  
 						)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t012",targetState="handle_Op",cond=whenDispatch("statoOp"))
-					transition(edgeName="t013",targetState="handle_rp",cond=whenDispatch("numRP"))
-					transition(edgeName="t014",targetState="handle_Inci",cond=whenDispatch("statoIn"))
-					transition(edgeName="t015",targetState="handle_Ash",cond=whenDispatch("valAsh"))
+					 transition(edgeName="t040",targetState="handle_Op",cond=whenDispatch("statoOp"))
+					transition(edgeName="t041",targetState="handle_rp",cond=whenDispatch("numRP"))
+					transition(edgeName="t042",targetState="handle_Inci",cond=whenDispatch("statoIn"))
+					transition(edgeName="t043",targetState="handle_Ash",cond=whenDispatch("valAsh"))
 				}	 
 				state("handle_Ash") { //this:State
 					action { //it:State
@@ -121,17 +122,17 @@ class Observedactor ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 								 AshStorage = payloadArg(0).toInt()  
 						}
 						CommUtils.outblack("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
-						updateResourceRep( "data($WasteStorage, $InciStatus, $OpRobot, $AshStorage)"  
+						updateResourceRep( "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage"  
 						)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t016",targetState="handle_Op",cond=whenDispatch("statoOp"))
-					transition(edgeName="t017",targetState="handle_rp",cond=whenDispatch("numRP"))
-					transition(edgeName="t018",targetState="handle_Inci",cond=whenDispatch("statoIn"))
-					transition(edgeName="t019",targetState="handle_Ash",cond=whenDispatch("valAsh"))
+					 transition(edgeName="t044",targetState="handle_Op",cond=whenDispatch("statoOp"))
+					transition(edgeName="t045",targetState="handle_rp",cond=whenDispatch("numRP"))
+					transition(edgeName="t046",targetState="handle_Inci",cond=whenDispatch("statoIn"))
+					transition(edgeName="t047",targetState="handle_Ash",cond=whenDispatch("valAsh"))
 				}	 
 			}
 		}

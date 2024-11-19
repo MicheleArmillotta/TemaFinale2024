@@ -19,13 +19,8 @@ import unibo.basicomm23.utils.ColorsOut;
 import unibo.basicomm23.utils.CommUtils;
 import unibo.basicomm23.utils.ConnectionFactory;
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import static org.junit.jupiter.api.Assertions.*;
-
-public class guitest {
-
+public class functionaltest {
+	
 	private static Interaction connSupport;
 
 	private static final String ADDRESS = "localhost";
@@ -106,19 +101,12 @@ public class guitest {
 			CommUtils.outmagenta("test_observer ======================================= ");
 			while (connSupport == null) {
 				connSupport = ConnectionFactory.createClientSupport(PROTOCOL, ADDRESS, PORT);
-				CommUtils.outcyan("testash another connect attempt ");
+				CommUtils.outcyan("testoprobot another connect attempt ");
 				Thread.sleep(1000);
 			}
 			
 			CommUtils.outcyan("CONNECTED to test_observer " + connSupport);
 
-			//connettiamoci alla GUI html
-			WebClient client = new WebClient();
-		    HtmlPage page = client.getPage("http://localhost:8075");
-		    
-		   
-			
-			
 			//inviamo messaggio di start all' observer (aspettiamo sia in idle)
 			
 			
@@ -130,31 +118,8 @@ public class guitest {
 			String answer_start = start_reply.msgContent();
 			CommUtils.outcyan("START PAYLOAD: "+ answer_start);
 			
-			//split
-			String variablesPart = answer_start.substring(answer_start.indexOf('(') + 1, answer_start.indexOf(')'));
-
-	        // Divide le variabili usando la virgola come separatore
-	        String[] variables = variablesPart.split(",");
-
-	        // Assegna ogni variabile a una variabile distinta
-	        String RP = variables[0];
-	        String INC = variables[1];
-	        String ASH = variables[2];
-	        String OP = variables[3];
-	        
-	        
-	        //prende dalla gui ora
-	        
-	        HtmlElement elementRP = page.getHtmlElementById("waste-storage");
-	        HtmlElement elementINC = page.getHtmlElementById("incinerator-status");
-	        HtmlElement elementASH = page.getHtmlElementById("ash-storage");
-	        HtmlElement elementOP = page.getHtmlElementById("robot-location");
 			
-			
-			assertEquals(RP, elementRP);
-			assertEquals(INC, elementINC);
-			assertEquals(ASH, elementASH);
-			assertEquals(OP, elementOP);
+			assertEquals(answer_start, "start_test_reply(OK)");
 			
 		} catch (Exception e) {
 			CommUtils.outred("test_observer ERROR " + e.getMessage());

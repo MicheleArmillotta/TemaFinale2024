@@ -21,89 +21,36 @@ class Test_observer ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		//val interruptedStateTransitions = mutableListOf<Transition>()
-		 var RP = 2 
-			   var Inc = "acceso"
-			   var Ash = 500
-			   var Op = "HOME"
-			   var RP_new = 0 
-			   var Inc_new = "" 
-			   var Ash_new = 0 	
-			   var Op_new = ""
+		 var W = 50  
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
 						CommUtils.outred("START TEST")
 						delay(1000) 
-						observeResource("localhost","8080","ctxsprintdue","observedactor","data")
+						observeResource("localhost","8080","ctxtext","monitoring_device","infotest")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t120",targetState="handleStart",cond=whenRequest("start_test"))
+					 transition(edgeName="t140",targetState="handleStart",cond=whenRequest("start_test"))
 				}	 
 				state("handleStart") { //this:State
 					action { //it:State
-						CommUtils.outred("HANDLE START!!!!")
-						delay(2000) 
-						forward("numRP", "numRP($RP)" ,"observedactor" ) 
-						forward("statoIn", "statoIn($Inc)" ,"observedactor" ) 
-						forward("valAsh", "valAsh($Ash)" ,"observedactor" ) 
-						forward("statoOp", "statoOp($Op)" ,"observedactor" ) 
-						delay(5000) 
+						emitLocalStreamEvent("scaledata", "scaledata($W)" ) 
+						delay(45000) 
+						CommUtils.outred("TEST IN HANDLESTART")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t221",targetState="discard1",cond=whenDispatch("data"))
+					 transition(edgeName="t241",targetState="handle_info",cond=whenDispatch("infotest"))
 				}	 
-				state("discard1") { //this:State
+				state("handle_info") { //this:State
 					action { //it:State
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t222",targetState="discard2",cond=whenDispatch("data"))
-				}	 
-				state("discard2") { //this:State
-					action { //it:State
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t223",targetState="discard3",cond=whenDispatch("data"))
-				}	 
-				state("discard3") { //this:State
-					action { //it:State
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t224",targetState="handle_data",cond=whenDispatch("data"))
-				}	 
-				state("handle_data") { //this:State
-					action { //it:State
-						CommUtils.outred("HANDLE DATA!!!!")
-						if( checkMsgContent( Term.createTerm("data(X,Y,Z,K)"), Term.createTerm("data(X,Y,Z,K)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								 RP_new = payloadArg(0).toInt()
-											   Inc_new = payloadArg(1)
-											   Ash_new = payloadArg(3).toInt()	
-											   Op_new = payloadArg(2)
-											   
-						}
-						
-									if(RP == RP_new && Inc == Inc_new && Ash == Ash_new && Op == Op_new){
-						answer("start_test", "start_test_reply", "start_test_reply(ok)"   )  
-						
-								}else{
-						answer("start_test", "start_test_reply", "start_test_reply(notok)"   )  
-						
-								}
+						CommUtils.outred("TEST ESEGUITO CON SUCCESSO RISPONDO")
+						answer("start_test", "start_test_reply", "start_test_reply(OK)"   )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
