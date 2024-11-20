@@ -34,7 +34,7 @@ class Wis ( name: String, scope: CoroutineScope, isconfined: Boolean=false  ) : 
 					action { //it:State
 						CommUtils.outred("WIS: wis starting...")
 						delay(2000) 
-						observeResource("localhost","8080","ctxsprintdue","oprobot","info")
+						observeResource("localhost","8080","ctxsprinttre","oprobot","info")
 						forward("activation_command", "activation_command(start)" ,"incinerator" ) 
 						//genTimer( actor, state )
 					}

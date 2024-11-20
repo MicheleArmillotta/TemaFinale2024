@@ -50,11 +50,11 @@ class Incinerator ( name: String, scope: CoroutineScope, isconfined: Boolean=fal
 				}	 
 				state("handleBurn") { //this:State
 					action { //it:State
-						forward("statoIn", "statoIn(burning)" ,"observedactor" ) 
+						forward("statoIn", "statoIn(burning)" ,"observeractor" ) 
 						CommUtils.outred("the incinerator is burning...")
 						delay(15000) 
 						emit("burnEnd", "burnEnd(finish)" ) 
-						forward("statoIn", "statoIn(spento)" ,"observedactor" ) 
+						forward("statoIn", "statoIn(spento)" ,"observeractor" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

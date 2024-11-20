@@ -26,21 +26,21 @@ dispatch( deposit_ash, deposit_ash(X) ).
 dispatch( turnLedOn, turnLedOn(X) ).
 dispatch( turnLedOff, turnLedOff(X) ).
 %====================================================================================
-context(ctxsprintdue, "localhost",  "TCP", "8080").
+context(ctxsprinttre, "localhost",  "TCP", "8080").
 context(ctxbasicrobot, "127.0.0.1",  "TCP", "8020").
 context(ctxmonitor, "127.0.0.1",  "TCP", "8128").
  qactor( basicrobot, ctxbasicrobot, "external").
   qactor( monitoring_device, ctxmonitor, "external").
   qactor( sonar_device, ctxmonitor, "external").
-  qactor( wis, ctxsprintdue, "it.unibo.wis.Wis").
+  qactor( wis, ctxsprinttre, "it.unibo.wis.Wis").
  static(wis).
-  qactor( incinerator, ctxsprintdue, "it.unibo.incinerator.Incinerator").
+  qactor( incinerator, ctxsprinttre, "it.unibo.incinerator.Incinerator").
  static(incinerator).
-  qactor( oprobot, ctxsprintdue, "it.unibo.oprobot.Oprobot").
+  qactor( oprobot, ctxsprinttre, "it.unibo.oprobot.Oprobot").
  static(oprobot).
-  qactor( scale, ctxsprintdue, "it.unibo.scale.Scale").
+  qactor( scale, ctxsprinttre, "it.unibo.scale.Scale").
  static(scale).
-  qactor( scale_device, ctxsprintdue, "it.unibo.scale_device.Scale_device").
+  qactor( scale_device, ctxsprinttre, "it.unibo.scale_device.Scale_device").
  static(scale_device).
-  qactor( observedactor, ctxsprintdue, "it.unibo.observedactor.Observedactor").
- static(observedactor).
+  qactor( observeractor, ctxsprinttre, "it.unibo.observeractor.Observeractor").
+ static(observeractor).

@@ -206,12 +206,12 @@ div.imagedesc{
 
 
    
-<title>SPRINT6</title></head>
+<title>SPRINT3</title></head>
     
 
 <body>
 <div id="top">
-<h1>SPRINT6<font size="5"></font> </h1>
+<h1>Sprint3<font size="5"></font> </h1>
 </div>  
 <div class="body">
     <h2>Introduction</h2>
@@ -219,7 +219,7 @@ div.imagedesc{
         <a href="./TemaFinale24.html">Richiesta del committente</a> <br><br>
         <strong>GOAL:</strong> Nello SPRINT3 ci si occupera' di quello di sviluppare l'<strong>interfaccia grafica (GUI)</strong>  per la visualizzazione dei dati del sistema. 
         
-        Punto di partenza: <a href="./doc_sprint2_1.html">Sprint1</a>
+        Punto di partenza: <a href="./doc_sprint2_1.html">Sprint2</a>
    <img src="./sprintduearch.png">
     </div>
 
@@ -236,28 +236,27 @@ div.imagedesc{
 
     <h2>Analisi del problema</h2>
     <div class="remark">
-        <li>
-        <cite><strong>The WIS system must also provide a ServiceStatusGUI (SSGUI) that must show</strong></cite> <br>
+        
+        <cite><strong>The WIS system must also provide a ServiceStatusGUI (SSGUI)</strong></cite> <br>
         Non e' specificato come la GUI debba ricevere queste informazioni dal sistema, e ci sono diverse opzioni possibili:</li>
             <li>La GUI potrebbe utilizzare un processo di polling periodico per ricevere informazioni dai vari componenti e rilevare eventuali cambiamenti.</li>
             <li>La GUI potrebbe ricevere informazioni sui cambiamenti di stato da parte di un attore specifico.</li>
             <li>La GUI potrebbe ricevere informazioni direttamente dal sistema WIS.</li>
             <br><br>
 
-            Considerando i precedenti sprint, dove il WIS possiede gia' tutte le informazioni necessarie per aggiornare lo stato della GUI,
-         ma le ottiene tramite polling, che e' un processo che non garantisce la freschezza delle informazioni, quindi si ritiene piu' opportuno aggiungere un nuovo <a	href="./QakActors24.html">attore</a>., 
-            chiamato ObserverActor. Questo attore ricevera' le informazioni ogni volta che si verifica un cambiamento di stato nel sistema, aggiornando la GUI con lo stato attuale del sistema. 
-        </li> 
+            Il WIS possiede gia' tutte le informazioni necessarie per aggiornare lo stato della GUI,
+         ma sono ottenute tramite polling, che e' un processo che non garantisce la freschezza delle informazioni. Si ritiene piu' opportuno quidi aggiungere un nuovo <a	href="./QakActors24.html">attore</a>, 
+            chiamato ObserverActor. Questo attore ricevera' le informazioni ogni volta che si verifica un cambiamento, aggiornando la GUI con lo stato attuale del sistema. 
+         
         <br><br>
-        <li>
+        
         <cite><strong>Non viene specificato come realizzarla</strong></cite> <br>
 
         Verra' sviluppata come una pagina Web, in modo da garantire un accesso semplice.
         Come struttura si fara' riferimento a <a	href="./Facade24Start.html">Facade24Start</a>.
-        </li>
+        
 
-        <h3>Architettura logica</h3>
-            <img src="./sprinttrearch.png">
+        
 			
 	<br>
     </div>
@@ -271,22 +270,24 @@ div.imagedesc{
         <h3>Test funzionale</h3>
         Il test controlla che quando il WasteStorage non e' vuoto e l'AshStorage non e' pieno, i rifiuti vengono bruciati e la cenere nell'Ash storage incrementa.
         <br>
-        <li>Il test viene superato se le condizioni sono rispettate</li>
-        <li>Il test fallisce se le condizioni non vengono rispettate</li>
+        
     </div>
 
     <h2>Project</h2>
+    <h3>Architettura</h3>
+            <img src="./sprint3arch.png">
     <div class="remark">
 
         <h3> <a href="../src/Sprint3.qak">ObserverActor</a></h3>
-            L'ObserverActor riceve dei messaggi ogni volta che uun dato significativo viene modificato e interagisce con la <strong>GUI</strong> attraverso una <code>UpdateResource</code>, che viene eseguito per ogni messaggio ricevuto.
+            L'ObserverActor riceve dei messaggi ogni volta che un dato significativo viene modificato e interagisce con la <strong>GUI</strong> attraverso una <code>UpdateResource</code>, che viene eseguito per ogni messaggio ricevuto.
             I messaggi sono:
-
-            <code>Dispatch numRP : numRP(X)</code> Inviato all'ObserverActor dalla Scale <br>
-            <code>Dispatch statoIn : statoIn(N)</code>  Inviato all'ObservedActor dall'Incinerator<br>  
-            <code>Dispatch statoOp : statoOp(N)</code>Inviato all'ObservedActor dall'OpRobot <br> 
-            <code>Dispatch valAsh : valAsh(X)</code>  Inviato all'ObservedActor dal MonitoringDevice <br>
-
+            <br>
+            <br>
+            <li><code>Dispatch numRP : numRP(X)</code> Inviato dalla Scale all'ObserverActor <br></li>
+            <li><code>Dispatch statoIn : statoIn(N)</code>  Inviato dall' Incinerator all'ObserverActor<br></li>  
+            <li><code>Dispatch statoOp : statoOp(N)</code>Inviato dall'OpRobot all'ObserverActor <br> </li>
+            <li><code>Dispatch valAsh : valAsh(X)</code>  Inviato dal MonitoringDevice all'ObserverActor <br></li>
+            <br>
         <h3><a	href="./Facade24Start.html">Facade24Start</a></h3>
         Le uniche modifiche degne di nota rispetto a Facade24Start sono <a
             href="../../Facade24Start/src/main/java/facade24/ApplguiCore.java">ApplguiCore.java</a> e <a
