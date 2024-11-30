@@ -149,7 +149,7 @@ class Wis ( name: String, scope: CoroutineScope, isconfined: Boolean=false  ) : 
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="testAdd", cond=doswitchGuarded({ RobPos.equals("ASHOUT")  
+					 transition( edgeName="goto",targetState="wait_message", cond=doswitchGuarded({ RobPos.equals("ASHOUT")  
 					}) )
 					transition( edgeName="goto",targetState="idle", cond=doswitchGuarded({! ( RobPos.equals("ASHOUT")  
 					) }) )
@@ -164,16 +164,6 @@ class Wis ( name: String, scope: CoroutineScope, isconfined: Boolean=false  ) : 
 					sysaction { //it:State
 					}	 	 
 					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
-				}	 
-				state("testAdd") { //this:State
-					action { //it:State
-						forward("addAsh", "addAsh(X)" ,"monitoring_device" ) 
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="wait_message", cond=doswitch() )
 				}	 
 			}
 		}

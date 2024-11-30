@@ -295,7 +295,7 @@ QActor oprobot context ctxsprintdue{
  		[# Position = "HOME" #]
  		delay 5000
  		[# State = "idle" #]
- 		forward observedactor -m statoOp : statoOp(idle_home)
+ 		forward observedactor -m statoOp : statoOp(HOME)
  		updateResource [# "info($State, $Position)" #] 
  		
  	}
@@ -308,7 +308,7 @@ QActor oprobot context ctxsprintdue{
  		[# State = "work" #]
  		updateResource [# "info($State, $Position)" #] 
  		request basicrobot -m moverobot : moverobot (0,4) //pos wateIN
- 		 forward observedactor -m statoOp : statoOp(moving_WasteIn)
+ 		 forward observedactor -m statoOp : statoOp(MOVING_TOWARDS_WASTE_IN)
  		
  	}
  	
@@ -320,11 +320,11 @@ QActor oprobot context ctxsprintdue{
  		println("opRobot in wateIn going to burnIn...") color yellow
  		[# Position = "WASTEIN" #]
  		delay 2000 //pick up time
- 		forward observedactor -m statoOp : statoOp(taking_RP)
+ 		forward observedactor -m statoOp : statoOp(TAKING_RP)
  		forward scale -m pickRP : pickRP(N)   //SOLO PER EMULARE COMPORTAMENTO MECCANICO
  		updateResource [# "info($State, $Position)" #] 
  		request basicrobot -m moverobot : moverobot (3,1) //pos burnIn
- 		forward observedactor -m statoOp : statoOp(moving_BurnIn)
+ 		forward observedactor -m statoOp : statoOp(MOVING_TOWARDS_INCINERATOR)
  		
  		
  		
@@ -339,10 +339,10 @@ QActor oprobot context ctxsprintdue{
  	 	println("opRobot in burIn going to HOME...") color yellow
  		[# Position = "BURNIN" #]
  		delay 2000 //deposit time
- 	//	forward observedactor -m statoOp : statoOp(leaving_RP)
+ 		forward observedactor -m statoOp : statoOp(LEAVING_RP)
  		updateResource [# "info($State, $Position)" #]  		
  		request basicrobot -m moverobot : moverobot (0,0) //HOME
- 		//forward observedactor -m statoOp : statoOp(going_home)
+ 		forward observedactor -m statoOp : statoOp(GOING_HOME)
  		
  	 }
  	 
@@ -354,7 +354,7 @@ QActor oprobot context ctxsprintdue{
  	  State home2{
  	  	println("opRobot HOME waiting for the incinerator to stop...") color yellow
  	  	[# Position = "HOME" #]
- 	  	forward observedactor -m statoOp : statoOp(waiting_home_end_of_burn)
+ 	  	forward observedactor -m statoOp : statoOp(WAITING_THE_INCINERATOR)
  		updateResource [# "info($State, $Position)" #] 
  	  	
  	  }
@@ -365,7 +365,7 @@ QActor oprobot context ctxsprintdue{
  	  
  	  State handleBurnOut{
  	  	println("opRobot in HOME going to gathering ashes...") color yellow
- 	  	forward observedactor -m statoOp : statoOp(moving_burnout)
+ 	  	forward observedactor -m statoOp : statoOp(MOVING_TOWARDS_BURNOUT)
  		request basicrobot -m moverobot : moverobot (5,3) // burnOUT
  	  }
  	  
@@ -377,11 +377,11 @@ QActor oprobot context ctxsprintdue{
  	   State handleBurnOutGo{
  	 	println("opRobot in BurnOUT going to AshOUT...") color yellow
  		[# Position = "BURNOUT" #]
- 		 forward observedactor -m statoOp : statoOp(taking_ash)
+ 		 forward observedactor -m statoOp : statoOp(TAKING_ASH)
  		delay 2000 //gathering time
  		updateResource [# "info($State, $Position)" #] 
  		request basicrobot -m moverobot : moverobot (6,4) //AshOUT
- 		forward observedactor -m statoOp : statoOp(moving_ashout)
+ 		forward observedactor -m statoOp : statoOp(MOVING_TOWARDS_ASHOUT)
  		
  	 }
  	 
@@ -395,11 +395,11 @@ QActor oprobot context ctxsprintdue{
  	  	println("RESTARTING THE ROUTINE...") color red
  		[# Position = "ASHOUT" #]
  		forward sonar_device -m deposit_ash : deposit_ash(X) //mock deposit
- 		forward observedactor -m statoOp : statoOp(deposit_ash)
+ 		forward observedactor -m statoOp : statoOp(DEPOSIT_ASH)
  		delay 2000 //deposit time
  		updateResource [# "info($State, $Position)" #] 
  		request basicrobot -m moverobot : moverobot (0,0) //HOME
- 		forward observedactor -m statoOp : statoOp(end_return_home)
+ 		forward observedactor -m statoOp : statoOp(END_RETURN_HOME)
  		
  	  }
  	  
@@ -547,7 +547,7 @@ QActor observedactor context ctxsprintdue{
 			 #]
 		}
 		println("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
-		updateResource[# "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage" #]
+		updateResource[# "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	ash: $AshStorage" #]
 	}
 	
 	Transition t1 whenMsg numRP -> handle_rp
@@ -562,7 +562,7 @@ QActor observedactor context ctxsprintdue{
 			[# InciStatus = payloadArg(0) #]
 		}
 		println("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
-		updateResource[# "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage" #]
+		updateResource[# "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	ash: $AshStorage" #]
 	}
 	
 	Transition t1 whenMsg numRP -> handle_rp
@@ -578,7 +578,7 @@ QActor observedactor context ctxsprintdue{
 			[# OpRobot = payloadArg(0) #]
 		}
 		println("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
-		updateResource[# "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage" #]
+		updateResource[# "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	ash: $AshStorage" #]
 	}
 	
 	Transition t0 whenMsg statoOp -> handle_Op
@@ -592,7 +592,7 @@ QActor observedactor context ctxsprintdue{
 			[# AshStorage = payloadArg(0).toInt() #]
 		}
 		println("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
-		updateResource[# "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage" #]
+		updateResource[# "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	ash: $AshStorage" #]
 	}
 	
 	Transition t0 whenMsg statoOp -> handle_Op

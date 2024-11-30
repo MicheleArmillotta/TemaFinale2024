@@ -29,7 +29,7 @@ class Observedactor ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						CommUtils.outblue("$name attivo")
+						CommUtils.outblue("ObserverActor attivo")
 						delay(500) 
 						//genTimer( actor, state )
 					}
@@ -40,7 +40,7 @@ class Observedactor ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 				}	 
 				state("ready") { //this:State
 					action { //it:State
-						CommUtils.outgreen("$name READY")
+						CommUtils.outgreen("ObserverActor READY")
 						updateResourceRep( "$name	INFO:	numero RP: $WasteStorage incinerator: $InciStatus	robot: $OpRobot	ash: $AshStorage"  
 						)
 						//genTimer( actor, state )
@@ -55,7 +55,7 @@ class Observedactor ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 				}	 
 				state("handle_rp") { //this:State
 					action { //it:State
-						CommUtils.outblack("$name aggiorno stato di WasteStorage")
+						CommUtils.outblack("ObserverActor aggiorno stato di WasteStorage")
 						if( checkMsgContent( Term.createTerm("numRP(X)"), Term.createTerm("numRP(X)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 var kg = payloadArg(0).toInt()
@@ -76,7 +76,7 @@ class Observedactor ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 				}	 
 				state("handle_Inci") { //this:State
 					action { //it:State
-						CommUtils.outblack("$name aggiorno stato di Incinerator")
+						CommUtils.outblack("ObserverActor aggiorno stato di Incinerator")
 						if( checkMsgContent( Term.createTerm("statoIn(N)"), Term.createTerm("statoIn(N)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 InciStatus = payloadArg(0)  
@@ -96,12 +96,12 @@ class Observedactor ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 				}	 
 				state("handle_Op") { //this:State
 					action { //it:State
-						CommUtils.outblack("$name aggiorno stato di OpRobot")
+						CommUtils.outblack("ObserverActor aggiorno stato di OpRobot")
 						if( checkMsgContent( Term.createTerm("statoOp(N)"), Term.createTerm("statoOp(N)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 OpRobot = payloadArg(0)  
 						}
-						CommUtils.outblack("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
+						CommUtils.outblack("ObserverActor numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
 						updateResourceRep( "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage"  
 						)
 						//genTimer( actor, state )
@@ -116,12 +116,12 @@ class Observedactor ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 				}	 
 				state("handle_Ash") { //this:State
 					action { //it:State
-						CommUtils.outblack("$name aggiorno stato di AshStorage")
+						CommUtils.outblack("ObserverActor aggiorno stato di AshStorage")
 						if( checkMsgContent( Term.createTerm("valAsh(X)"), Term.createTerm("valAsh(X)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 AshStorage = payloadArg(0).toInt()  
 						}
-						CommUtils.outblack("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
+						CommUtils.outblack("ObserverActor numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
 						updateResourceRep( "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage"  
 						)
 						//genTimer( actor, state )

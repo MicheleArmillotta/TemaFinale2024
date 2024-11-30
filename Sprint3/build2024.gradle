@@ -170,9 +170,9 @@ task dovesiamo {
 
 distributions {
     main {
-        distributionBaseName = 'testfunzionale'
+        distributionBaseName = 'sprint3'
         contents { 
-             from './testfunzionale.pl'
+             from './sprint3.pl'
              from './sysRules.pl'
              from './facadeConfig.json'
         }
