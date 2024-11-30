@@ -45,15 +45,14 @@ class Monitoring_device ( name: String, scope: CoroutineScope, isconfined: Boole
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t028",targetState="handleSonar",cond=whenDispatch("sonar_value"))
-					transition(edgeName="t029",targetState="handleTurnOff",cond=whenDispatch("turnLedOff"))
-					transition(edgeName="t030",targetState="handleTurnOn",cond=whenDispatch("turnLedOn"))
-					transition(edgeName="t031",targetState="handlePolling",cond=whenRequest("pollingAsh"))
-					transition(edgeName="t032",targetState="handleAdd",cond=whenDispatch("addAsh"))
+					 transition(edgeName="t048",targetState="handleSonar",cond=whenDispatch("sonar_value"))
+					transition(edgeName="t049",targetState="handleTurnOff",cond=whenDispatch("turnLedOff"))
+					transition(edgeName="t050",targetState="handleTurnOn",cond=whenDispatch("turnLedOn"))
+					transition(edgeName="t051",targetState="handlePolling",cond=whenRequest("pollingAsh"))
+					transition(edgeName="t052",targetState="handleAdd",cond=whenDispatch("addAsh"))
 				}	 
 				state("handleAdd") { //this:State
 					action { //it:State
-						CommUtils.outred("Monitorign: sono in aggiunta ")
 						 Ash_level = Ash_level + 200  
 						updateResourceRep( "info($Ash_level)"  
 						)
@@ -70,6 +69,7 @@ class Monitoring_device ( name: String, scope: CoroutineScope, isconfined: Boole
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 Ash_level = payloadArg(0).toInt()  
 								CommUtils.outred("Ash_level: $Ash_level")
+								forward("valAsh", "valAsh($Ash_level)" ,"observedactor" ) 
 								if(  Ash_level<=DLIMIT || Ash_level == 1000  
 								 ){forward("ledBlink", "ledBlink(N)" ,"led" ) 
 								}

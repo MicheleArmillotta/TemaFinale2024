@@ -15,18 +15,17 @@ Dispatch valAsh : valAsh(X)
 
 Request pollingAsh : pollingAsh(X)
 Reply valueAsh : valueAsh(X) for pollingAsh
+Dispatch addAsh : addAsh(X)
+
 
 Dispatch turnLedOn : turnLedOn(X)
 Dispatch turnLedOff : turnLedOff(X)
+Dispatch deposit_ash:deposit_ash(X)
 
 
 //sonar -> monitoring_device
 
 Dispatch sonar_value:sonar_value(X)
-
-//op robot -> sonar device (mock)
-
-Dispatch deposit_ash:deposit_ash(X)
 
 
 Context ctxmonitor ip [ host= "localhost" port= 8128 ]
@@ -58,7 +57,16 @@ QActor monitoring_device context ctxmonitor{
 				  whenMsg turnLedOff -> handleTurnOff
 				  whenMsg turnLedOn -> handleTurnOn
 				  whenRequest pollingAsh -> handlePolling
-				  
+				  whenMsg addAsh -> handleAdd  //solo a fini di test
+		
+	State handleAdd{
+		println("Monitorign: sono in aggiunta ") color red
+		[# Ash_level = Ash_level + 200 #]
+		updateResource [# "info($Ash_level)" #] 
+	}
+		
+			  
+	Goto idle		  
 				  
 	State handleSonar{
 		onMsg(sonar_value:sonar_value(K)){
@@ -223,6 +231,38 @@ QActor sonar_device context ctxmonitor{  //mock
 		emitlocalstream sonardata:sonardata($K)
 	}
 				  
-	Goto idle	  
-	
+	Goto idle
+//	Goto half_empty
+//	
+//	
+//	State half_empty{
+//		delay 30000
+//		[# K= 500 #]  //empty
+//		delay 1500
+//		emitlocalstream sonardata:sonardata($K)
+//	}
+//	
+//	
+//	Goto full
+//	
+//	
+//	State full{
+//		delay 30000
+//		[# K= 0 #]  //empty
+//		delay 1500
+//		emitlocalstream sonardata:sonardata($K)
+//	}
+//	
+//	
+//	Goto empty
+//	
+//	
+//	State empty{
+//		delay 30000
+//		[# K= 1000 #]  //empty
+//		delay 1500
+//		emitlocalstream sonardata:sonardata($K)
+//	}
+//	
+//	Goto half_empty
 }

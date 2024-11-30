@@ -46,9 +46,9 @@ class Led ( name: String, scope: CoroutineScope, isconfined: Boolean=false  ) : 
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t04",targetState="handleOn",cond=whenDispatch("ledOn"))
-					transition(edgeName="t05",targetState="handleOff",cond=whenDispatch("ledOff"))
-					transition(edgeName="t06",targetState="handleBlink",cond=whenDispatch("ledBlink"))
+					 transition(edgeName="t05",targetState="handleOn",cond=whenDispatch("ledOn"))
+					transition(edgeName="t06",targetState="handleOff",cond=whenDispatch("ledOff"))
+					transition(edgeName="t07",targetState="handleBlink",cond=whenDispatch("ledBlink"))
 				}	 
 				state("handleOn") { //this:State
 					action { //it:State

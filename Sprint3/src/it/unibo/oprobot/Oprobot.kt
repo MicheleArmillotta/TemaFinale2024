@@ -58,7 +58,7 @@ class Oprobot ( name: String, scope: CoroutineScope, isconfined: Boolean=false  
 						 Position = "HOME"  
 						delay(5000) 
 						 State = "idle"  
-						forward("statoOp", "statoOp(HOME)" ,"observeractor" ) 
+						forward("statoOp", "statoOp(idle_home)" ,"observedactor" ) 
 						updateResourceRep( "info($State, $Position)"  
 						)
 						//genTimer( actor, state )
@@ -75,7 +75,7 @@ class Oprobot ( name: String, scope: CoroutineScope, isconfined: Boolean=false  
 						updateResourceRep( "info($State, $Position)"  
 						)
 						request("moverobot", "moverobot(0,4)" ,"basicrobot" )  
-						forward("statoOp", "statoOp(MOVING_TOWARDS_WASTE_IN)" ,"observeractor" ) 
+						forward("statoOp", "statoOp(moving_WasteIn)" ,"observedactor" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -89,12 +89,12 @@ class Oprobot ( name: String, scope: CoroutineScope, isconfined: Boolean=false  
 						CommUtils.outyellow("opRobot in wateIn going to burnIn...")
 						 Position = "WASTEIN"  
 						delay(2000) 
-						forward("statoOp", "statoOp(TAKING_RP)" ,"observeractor" ) 
+						forward("statoOp", "statoOp(taking_RP)" ,"observedactor" ) 
 						forward("pickRP", "pickRP(N)" ,"scale" ) 
 						updateResourceRep( "info($State, $Position)"  
 						)
 						request("moverobot", "moverobot(3,1)" ,"basicrobot" )  
-						forward("statoOp", "statoOp(MOVING_TOWARDS_INCINERATOR)" ,"observeractor" ) 
+						forward("statoOp", "statoOp(moving_BurnIn)" ,"observedactor" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -108,11 +108,9 @@ class Oprobot ( name: String, scope: CoroutineScope, isconfined: Boolean=false  
 						CommUtils.outyellow("opRobot in burIn going to HOME...")
 						 Position = "BURNIN"  
 						delay(2000) 
-						forward("statoOp", "statoOp(LEAVING_RP)" ,"observeractor" ) 
 						updateResourceRep( "info($State, $Position)"  
 						)
 						request("moverobot", "moverobot(0,0)" ,"basicrobot" )  
-						forward("statoOp", "statoOp(GOING_HOME)" ,"observeractor" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -125,7 +123,7 @@ class Oprobot ( name: String, scope: CoroutineScope, isconfined: Boolean=false  
 					action { //it:State
 						CommUtils.outyellow("opRobot HOME waiting for the incinerator to stop...")
 						 Position = "HOME"  
-						forward("statoOp", "statoOp(WAITING_THE_INCINERATOR)" ,"observeractor" ) 
+						forward("statoOp", "statoOp(waiting_home_end_of_burn)" ,"observedactor" ) 
 						updateResourceRep( "info($State, $Position)"  
 						)
 						//genTimer( actor, state )
@@ -138,7 +136,7 @@ class Oprobot ( name: String, scope: CoroutineScope, isconfined: Boolean=false  
 				state("handleBurnOut") { //this:State
 					action { //it:State
 						CommUtils.outyellow("opRobot in HOME going to gathering ashes...")
-						forward("statoOp", "statoOp(MOVING_TOWARDS_BURNOUT)" ,"observeractor" ) 
+						forward("statoOp", "statoOp(moving_burnout)" ,"observedactor" ) 
 						request("moverobot", "moverobot(5,3)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}
@@ -152,12 +150,12 @@ class Oprobot ( name: String, scope: CoroutineScope, isconfined: Boolean=false  
 					action { //it:State
 						CommUtils.outyellow("opRobot in BurnOUT going to AshOUT...")
 						 Position = "BURNOUT"  
-						forward("statoOp", "statoOp(TAKING_ASH)" ,"observeractor" ) 
+						forward("statoOp", "statoOp(taking_ash)" ,"observedactor" ) 
 						delay(2000) 
 						updateResourceRep( "info($State, $Position)"  
 						)
 						request("moverobot", "moverobot(6,4)" ,"basicrobot" )  
-						forward("statoOp", "statoOp(MOVING_TOWARDS_ASHOUT)" ,"observeractor" ) 
+						forward("statoOp", "statoOp(moving_ashout)" ,"observedactor" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -172,12 +170,12 @@ class Oprobot ( name: String, scope: CoroutineScope, isconfined: Boolean=false  
 						CommUtils.outred("RESTARTING THE ROUTINE...")
 						 Position = "ASHOUT"  
 						forward("deposit_ash", "deposit_ash(X)" ,"sonar_device" ) 
-						forward("statoOp", "statoOp(DEPOSIT_ASH)" ,"observeractor" ) 
+						forward("statoOp", "statoOp(deposit_ash)" ,"observedactor" ) 
 						delay(2000) 
 						updateResourceRep( "info($State, $Position)"  
 						)
 						request("moverobot", "moverobot(0,0)" ,"basicrobot" )  
-						forward("statoOp", "statoOp(END_RETURN_HOME)" ,"observeractor" ) 
+						forward("statoOp", "statoOp(end_return_home)" ,"observedactor" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

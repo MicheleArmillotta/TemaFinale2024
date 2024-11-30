@@ -24,7 +24,7 @@ class Incinerator ( name: String, scope: CoroutineScope, isconfined: Boolean=fal
 		
 		        val BTIME = 4000L;
 		        var start = "off";
-		        //var stato = "spento";
+		        var stato = "spento";
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -41,6 +41,8 @@ class Incinerator ( name: String, scope: CoroutineScope, isconfined: Boolean=fal
 					action { //it:State
 						CommUtils.outgreen("the incinerator has started...")
 						 start ="on";  
+						 stato = "burning";  
+						forward("statoIn", "statoIn(burning)" ,"observedactor" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -50,11 +52,13 @@ class Incinerator ( name: String, scope: CoroutineScope, isconfined: Boolean=fal
 				}	 
 				state("handleBurn") { //this:State
 					action { //it:State
-						forward("statoIn", "statoIn(burning)" ,"observeractor" ) 
+						 stato = "burning";  
+						forward("statoIn", "statoIn(burning)" ,"observedactor" ) 
 						CommUtils.outred("the incinerator is burning...")
 						delay(15000) 
 						emit("burnEnd", "burnEnd(finish)" ) 
-						forward("statoIn", "statoIn(spento)" ,"observeractor" ) 
+						 stato = "spento";  
+						forward("statoIn", "statoIn(spento)" ,"observedactor" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

@@ -8,10 +8,11 @@ dispatch( ledBlink, ledBlink(X) ).
 dispatch( valAsh, valAsh(X) ).
 request( pollingAsh, pollingAsh(X) ).
 reply( valueAsh, valueAsh(X) ).  %%for pollingAsh
+dispatch( addAsh, addAsh(X) ).
 dispatch( turnLedOn, turnLedOn(X) ).
 dispatch( turnLedOff, turnLedOff(X) ).
-dispatch( sonar_value, sonar_value(X) ).
 dispatch( deposit_ash, deposit_ash(X) ).
+dispatch( sonar_value, sonar_value(X) ).
 %====================================================================================
 context(ctxmonitor, "localhost",  "TCP", "8128").
 context(ctxsprintdue, "127.0.0.1",  "TCP", "8080").

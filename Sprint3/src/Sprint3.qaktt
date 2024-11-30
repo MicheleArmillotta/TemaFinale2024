@@ -56,7 +56,7 @@ Dispatch turnLedOff : turnLedOff(X)
 
 //context
 
-Context ctxsprinttre ip [host="localhost" port=8080]
+Context ctxsprintdue ip [host="localhost" port=8080]
 Context ctxbasicrobot ip [host="127.0.0.1"  port=8020]
 Context ctxmonitor ip [host="127.0.0.1"  port=8128]
 
@@ -65,7 +65,7 @@ ExternalQActor monitoring_device context ctxmonitor
 ExternalQActor sonar_device context ctxmonitor
 
 
-QActor wis context ctxsprinttre{
+QActor wis context ctxsprintdue{
 	[#
 		var RobPos = ""
 		var RP_w = 0
@@ -182,7 +182,7 @@ QActor wis context ctxsprinttre{
 }
 
 
-QActor incinerator context ctxsprinttre{
+QActor incinerator context ctxsprintdue{
 	[#
         val BTIME = 4000L;
         var start = "off";
@@ -213,14 +213,14 @@ QActor incinerator context ctxsprinttre{
 	State handleBurn{
 		// invio stato a observedActor
 		//[# stato = "burning"; #]
-		forward observeractor -m statoIn : statoIn(burning)
+		forward observedactor -m statoIn : statoIn(burning)
 		println("the incinerator is burning...") color red
 		delay 15000
 		emit burnEnd : burnEnd(finish)
 		// invio stato a observedActor
 		
 		//[# stato = "spento"; #]
-		forward observeractor -m statoIn : statoIn(spento)
+		forward observedactor -m statoIn : statoIn(spento)
 		
 		
 	}
@@ -232,7 +232,7 @@ QActor incinerator context ctxsprinttre{
 
 
 
-QActor oprobot context ctxsprinttre{
+QActor oprobot context ctxsprintdue{
 	
 	[#
 		var Position = ""
@@ -261,7 +261,7 @@ QActor oprobot context ctxsprinttre{
  		[# Position = "HOME" #]
  		delay 5000
  		[# State = "idle" #]
- 		forward observeractor -m statoOp : statoOp(HOME)
+ 		forward observedactor -m statoOp : statoOp(idle_home)
  		updateResource [# "info($State, $Position)" #] 
  		
  	}
@@ -274,7 +274,7 @@ QActor oprobot context ctxsprinttre{
  		[# State = "work" #]
  		updateResource [# "info($State, $Position)" #] 
  		request basicrobot -m moverobot : moverobot (0,4) //pos wateIN
- 		 forward observeractor -m statoOp : statoOp(MOVING_TOWARDS_WASTE_IN)
+ 		 forward observedactor -m statoOp : statoOp(moving_WasteIn)
  		
  	}
  	
@@ -286,11 +286,11 @@ QActor oprobot context ctxsprinttre{
  		println("opRobot in wateIn going to burnIn...") color yellow
  		[# Position = "WASTEIN" #]
  		delay 2000 //pick up time
- 		forward observeractor -m statoOp : statoOp(TAKING_RP)
+ 		forward observedactor -m statoOp : statoOp(taking_RP)
  		forward scale -m pickRP : pickRP(N)   //SOLO PER EMULARE COMPORTAMENTO MECCANICO
  		updateResource [# "info($State, $Position)" #] 
  		request basicrobot -m moverobot : moverobot (3,1) //pos burnIn
- 		forward observeractor -m statoOp : statoOp(MOVING_TOWARDS_INCINERATOR)
+ 		forward observedactor -m statoOp : statoOp(moving_BurnIn)
  		
  		
  		
@@ -305,10 +305,10 @@ QActor oprobot context ctxsprinttre{
  	 	println("opRobot in burIn going to HOME...") color yellow
  		[# Position = "BURNIN" #]
  		delay 2000 //deposit time
- 		forward observeractor -m statoOp : statoOp(LEAVING_RP)
+ 		forward observedactor -m statoOp : statoOp(leaving_RP)
  		updateResource [# "info($State, $Position)" #]  		
  		request basicrobot -m moverobot : moverobot (0,0) //HOME
- 		forward observeractor -m statoOp : statoOp(GOING_HOME)
+ 		forward observedactor -m statoOp : statoOp(going_home)
  		
  	 }
  	 
@@ -320,7 +320,7 @@ QActor oprobot context ctxsprinttre{
  	  State home2{
  	  	println("opRobot HOME waiting for the incinerator to stop...") color yellow
  	  	[# Position = "HOME" #]
- 	  	forward observeractor -m statoOp : statoOp(WAITING_THE_INCINERATOR)
+ 	  	forward observedactor -m statoOp : statoOp(waiting_home_end_of_burn)
  		updateResource [# "info($State, $Position)" #] 
  	  	
  	  }
@@ -331,7 +331,7 @@ QActor oprobot context ctxsprinttre{
  	  
  	  State handleBurnOut{
  	  	println("opRobot in HOME going to gathering ashes...") color yellow
- 	  	forward observeractor -m statoOp : statoOp(MOVING_TOWARDS_BURNOUT)
+ 	  	forward observedactor -m statoOp : statoOp(moving_burnout)
  		request basicrobot -m moverobot : moverobot (5,3) // burnOUT
  	  }
  	  
@@ -343,11 +343,11 @@ QActor oprobot context ctxsprinttre{
  	   State handleBurnOutGo{
  	 	println("opRobot in BurnOUT going to AshOUT...") color yellow
  		[# Position = "BURNOUT" #]
- 		 forward observeractor -m statoOp : statoOp(TAKING_ASH)
+ 		 forward observedactor -m statoOp : statoOp(taking_ash)
  		delay 2000 //gathering time
  		updateResource [# "info($State, $Position)" #] 
  		request basicrobot -m moverobot : moverobot (6,4) //AshOUT
- 		forward observeractor -m statoOp : statoOp(MOVING_TOWARDS_ASHOUT)
+ 		forward observedactor -m statoOp : statoOp(moving_ashout)
  		
  	 }
  	 
@@ -361,11 +361,11 @@ QActor oprobot context ctxsprinttre{
  	  	println("RESTARTING THE ROUTINE...") color red
  		[# Position = "ASHOUT" #]
  		forward sonar_device -m deposit_ash : deposit_ash(X) //mock deposit
- 		forward observeractor -m statoOp : statoOp(DEPOSIT_ASH)
+ 		forward observedactor -m statoOp : statoOp(deposit_ash)
  		delay 2000 //deposit time
  		updateResource [# "info($State, $Position)" #] 
  		request basicrobot -m moverobot : moverobot (0,0) //HOME
- 		forward observeractor -m statoOp : statoOp(END_RETURN_HOME)
+ 		forward observedactor -m statoOp : statoOp(end_return_home)
  		
  	  }
  	  
@@ -396,7 +396,7 @@ QActor oprobot context ctxsprinttre{
 
 
 
-QActor scale context ctxsprinttre{
+QActor scale context ctxsprintdue{
 	[#
 		
 		var RP_number = 0
@@ -424,7 +424,7 @@ QActor scale context ctxsprinttre{
 			[# RP_number = RP_number + 1  #]
 			println("$name | the RP number now is $RP_number ") color magenta
 			// update numero di RP : ne hanno aggiunto uno
-			forward observeractor -m numRP : numRP($RP_number)
+			forward observedactor -m numRP : numRP($RP_number)
 		}
 	}
 	Goto work 
@@ -441,7 +441,7 @@ QActor scale context ctxsprinttre{
 		println("$name | pick request from robot, the RP number is $RP_number") color magenta
 		[# RP_number = RP_number - 1 #]
 		// update numero di RP : ne hanno tolti
-		forward observeractor -m numRP : numRP($RP_number)
+		forward observedactor -m numRP : numRP($RP_number)
 		
 	}
 	
@@ -456,7 +456,7 @@ QActor scale context ctxsprinttre{
 
 
 
-QActor scale_device context ctxsprinttre{
+QActor scale_device context ctxsprintdue{
 [# var W = 0 #]
 	
 	State s0 initial{  
@@ -479,7 +479,7 @@ QActor scale_device context ctxsprinttre{
  	
 }//sonardevice
 
-QActor observeractor context ctxsprinttre{
+QActor observedactor context ctxsprintdue{
 	[#
 		var WasteStorage = 0;
 		var AshStorage = 0;

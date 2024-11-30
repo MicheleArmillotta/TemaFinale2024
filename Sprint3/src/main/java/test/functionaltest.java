@@ -53,7 +53,20 @@ public class functionaltest {
 				try {
 					CommUtils.outmagenta("TestMDCtx activateSystemUsingGradle ");
 					Process gradleProcess = Runtime.getRuntime().exec("./gradlew run");
-					showOutput(gradleProcess,ColorsOut.BLACK);
+					Process gradleOpRobot = Runtime.getRuntime().exec(new String[] {
+						    "sh", "-c", "cd ../unibo.basicrobot24 && ./gradlew run"
+						});
+					Process gradleProcessSprint2 = Runtime.getRuntime().exec(new String[] {
+						    "sh", "-c", "cd ../MonitoringDeviceSprint2 && ./gradlew run"
+						});
+					Process gradleProcessFacade24Start = Runtime.getRuntime().exec(new String[] {
+						    "sh", "-c", "cd ../Facade24Start && ./gradlew bootRun"
+						});
+	                
+					showOutput(gradleProcess,ColorsOut.GREEN);
+					showOutput(gradleOpRobot,ColorsOut.MAGENTA);
+				    showOutput(gradleProcessSprint2,ColorsOut.RED);
+					showOutput(gradleProcessFacade24Start,ColorsOut.BLUE);
 				} catch ( Exception e) {
 					CommUtils.outred("TestMDCtx activate ERROR " + e.getMessage());
 				}
@@ -66,7 +79,21 @@ public class functionaltest {
 		 try {
 	            CommUtils.outmagenta("Stopping Gradle daemons...");
 	            Process stopProcess = Runtime.getRuntime().exec("./gradlew --stop");
-	            showOutput(stopProcess, ColorsOut.BLACK);
+	            Process stopOpRobot = Runtime.getRuntime().exec(new String[] {
+					    "sh", "-c", "cd ../unibo.basicrobot24 && ./gradlew --stop"
+					});
+	            Process stopProcessSprint2 = Runtime.getRuntime().exec(new String[] {
+					    "sh", "-c", "cd ../MonitoringDeviceSprint2 && ./gradlew --stop"
+					});
+	            Process stopProcessFacade24Start = Runtime.getRuntime().exec(new String[] {
+	            	    "sh", "-c", "cd /path/to/Facade24Start && ./gradlew --stop"
+	            	});
+
+	            showOutput(stopProcess, ColorsOut.GREEN);
+				showOutput(stopOpRobot,ColorsOut.MAGENTA);
+	            showOutput(stopProcessSprint2,ColorsOut.RED);
+				showOutput(stopProcessFacade24Start,ColorsOut.BLUE);
+
 	            int exitCode = stopProcess.waitFor();
 	            if (exitCode == 0) {
 	                CommUtils.outgreen("Gradle daemons stopped successfully.");
@@ -101,7 +128,7 @@ public class functionaltest {
 			CommUtils.outmagenta("test_observer ======================================= ");
 			while (connSupport == null) {
 				connSupport = ConnectionFactory.createClientSupport(PROTOCOL, ADDRESS, PORT);
-				CommUtils.outcyan("testoprobot another connect attempt ");
+				CommUtils.outcyan("testfunzionale another connect attempt ");
 				Thread.sleep(1000);
 			}
 			

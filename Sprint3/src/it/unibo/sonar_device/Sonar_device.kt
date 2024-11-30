@@ -46,8 +46,8 @@ class Sonar_device ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 				 	 		stateTimer = TimerActor("timer_idle", 
 				 	 					  scope, context!!, "local_tout_"+name+"_idle", 80000.toLong() )  //OCT2023
 					}	 	 
-					 transition(edgeName="t038",targetState="gatherAsh",cond=whenTimeout("local_tout_"+name+"_idle"))   
-					transition(edgeName="t039",targetState="handleAsh",cond=whenDispatch("deposit_ash"))
+					 transition(edgeName="t058",targetState="gatherAsh",cond=whenTimeout("local_tout_"+name+"_idle"))   
+					transition(edgeName="t059",targetState="handleAsh",cond=whenDispatch("deposit_ash"))
 				}	 
 				state("handleAsh") { //this:State
 					action { //it:State

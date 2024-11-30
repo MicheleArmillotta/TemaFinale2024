@@ -27,13 +27,13 @@ class Test_observer ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 					action { //it:State
 						CommUtils.outred("START TEST")
 						delay(1000) 
-						observeResource("localhost","8080","ctxtext","monitoring_device","infotest")
+						observeResource("127.0.0.1","8128","ctxmonitor","monitoring_device","infotest")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t140",targetState="handleStart",cond=whenRequest("start_test"))
+					 transition(edgeName="t148",targetState="handleStart",cond=whenRequest("start_test"))
 				}	 
 				state("handleStart") { //this:State
 					action { //it:State
@@ -45,7 +45,7 @@ class Test_observer ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t241",targetState="handle_info",cond=whenDispatch("infotest"))
+					 transition(edgeName="t249",targetState="handle_info",cond=whenDispatch("infotest"))
 				}	 
 				state("handle_info") { //this:State
 					action { //it:State

@@ -59,7 +59,7 @@ class Scale ( name: String, scope: CoroutineScope, isconfined: Boolean=false  ) 
 								CommUtils.outmagenta("$name | weight=${payloadArg(0)}")
 								 RP_number = RP_number + 1   
 								CommUtils.outmagenta("$name | the RP number now is $RP_number ")
-								forward("numRP", "numRP($RP_number)" ,"observeractor" ) 
+								forward("numRP", "numRP($RP_number)" ,"observedactor" ) 
 						}
 						//genTimer( actor, state )
 					}
@@ -83,7 +83,7 @@ class Scale ( name: String, scope: CoroutineScope, isconfined: Boolean=false  ) 
 					action { //it:State
 						CommUtils.outmagenta("$name | pick request from robot, the RP number is $RP_number")
 						 RP_number = RP_number - 1  
-						forward("numRP", "numRP($RP_number)" ,"observeractor" ) 
+						forward("numRP", "numRP($RP_number)" ,"observedactor" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

@@ -86,16 +86,16 @@ Dispatch deposit_ash:deposit_ash(X)
 
 //context
 
-Context ctxtext ip [host="localhost" port=8080]
+Context ctxsprintdue ip [host="localhost" port=8080]
 Context ctxbasicrobot ip [host="127.0.0.1"  port=8020]
-//Context ctxmonitor ip [host="127.0.0.1"  port=8128]
+Context ctxmonitor ip [host="127.0.0.1"  port=8128]
 
 ExternalQActor basicrobot context ctxbasicrobot
-//ExternalQActor monitoring_device context ctxmonitor
-//ExternalQActor sonar_device context ctxmonitor
+ExternalQActor monitoring_device context ctxmonitor
+ExternalQActor sonar_device context ctxmonitor
 
 
-QActor wis context ctxtext{
+QActor wis context ctxsprintdue{
 	[#
 		var RobPos = ""
 		var RP_w = 0
@@ -216,11 +216,11 @@ QActor wis context ctxtext{
 }
 
 
-QActor incinerator context ctxtext{
+QActor incinerator context ctxsprintdue{
 	[#
         val BTIME = 4000L;
         var start = "off";
-        //var stato = "spento";
+        var stato = "spento";
 	#]
 	
 	State s0 initial{
@@ -236,8 +236,8 @@ QActor incinerator context ctxtext{
 		println("the incinerator has started...") color green
 		[# start ="on"; #]
 		// invio stato a observedActor
-		//[# stato = "burning"; #]
-		//forward observedactor -m statoIn : statoIn(burning)
+		[# stato = "burning"; #]
+		forward observedactor -m statoIn : statoIn(burning)
 
 	}
 	
@@ -245,16 +245,16 @@ QActor incinerator context ctxtext{
 		whenMsg startBurn -> handleBurn
 		
 	State handleBurn{
-		// invio stato a observedActor
-		//[# stato = "burning"; #]
-	//	forward observedactor -m statoIn : statoIn(burning)
+		 //invio stato a observedActor
+		[# stato = "burning"; #]
+		forward observedactor -m statoIn : statoIn(burning)
 		println("the incinerator is burning...") color red
 		delay 15000
 		emit burnEnd : burnEnd(finish)
 		// invio stato a observedActor
 		
-		//[# stato = "spento"; #]
-	//	forward observedactor -m statoIn : statoIn(spento)
+		[# stato = "spento"; #]
+		forward observedactor -m statoIn : statoIn(spento)
 		
 		
 	}
@@ -266,7 +266,7 @@ QActor incinerator context ctxtext{
 
 
 
-QActor oprobot context ctxtext{
+QActor oprobot context ctxsprintdue{
 	
 	[#
 		var Position = ""
@@ -295,7 +295,7 @@ QActor oprobot context ctxtext{
  		[# Position = "HOME" #]
  		delay 5000
  		[# State = "idle" #]
- 	//	forward observedactor -m statoOp : statoOp(idle_home)
+ 		forward observedactor -m statoOp : statoOp(idle_home)
  		updateResource [# "info($State, $Position)" #] 
  		
  	}
@@ -308,7 +308,7 @@ QActor oprobot context ctxtext{
  		[# State = "work" #]
  		updateResource [# "info($State, $Position)" #] 
  		request basicrobot -m moverobot : moverobot (0,4) //pos wateIN
- 	//	 forward observedactor -m statoOp : statoOp(moving_WasteIn)
+ 		 forward observedactor -m statoOp : statoOp(moving_WasteIn)
  		
  	}
  	
@@ -320,11 +320,11 @@ QActor oprobot context ctxtext{
  		println("opRobot in wateIn going to burnIn...") color yellow
  		[# Position = "WASTEIN" #]
  		delay 2000 //pick up time
- 	//	forward observedactor -m statoOp : statoOp(taking_RP)
+ 		forward observedactor -m statoOp : statoOp(taking_RP)
  		forward scale -m pickRP : pickRP(N)   //SOLO PER EMULARE COMPORTAMENTO MECCANICO
  		updateResource [# "info($State, $Position)" #] 
  		request basicrobot -m moverobot : moverobot (3,1) //pos burnIn
- //		forward observedactor -m statoOp : statoOp(moving_BurnIn)
+ 		forward observedactor -m statoOp : statoOp(moving_BurnIn)
  		
  		
  		
@@ -354,7 +354,7 @@ QActor oprobot context ctxtext{
  	  State home2{
  	  	println("opRobot HOME waiting for the incinerator to stop...") color yellow
  	  	[# Position = "HOME" #]
- 	//  	forward observedactor -m statoOp : statoOp(waiting_home_end_of_burn)
+ 	  	forward observedactor -m statoOp : statoOp(waiting_home_end_of_burn)
  		updateResource [# "info($State, $Position)" #] 
  	  	
  	  }
@@ -365,7 +365,7 @@ QActor oprobot context ctxtext{
  	  
  	  State handleBurnOut{
  	  	println("opRobot in HOME going to gathering ashes...") color yellow
- 	 // 	forward observedactor -m statoOp : statoOp(moving_burnout)
+ 	  	forward observedactor -m statoOp : statoOp(moving_burnout)
  		request basicrobot -m moverobot : moverobot (5,3) // burnOUT
  	  }
  	  
@@ -377,11 +377,11 @@ QActor oprobot context ctxtext{
  	   State handleBurnOutGo{
  	 	println("opRobot in BurnOUT going to AshOUT...") color yellow
  		[# Position = "BURNOUT" #]
- 		// forward observedactor -m statoOp : statoOp(taking_ash)
+ 		 forward observedactor -m statoOp : statoOp(taking_ash)
  		delay 2000 //gathering time
  		updateResource [# "info($State, $Position)" #] 
  		request basicrobot -m moverobot : moverobot (6,4) //AshOUT
- 		//forward observedactor -m statoOp : statoOp(moving_ashout)
+ 		forward observedactor -m statoOp : statoOp(moving_ashout)
  		
  	 }
  	 
@@ -395,11 +395,11 @@ QActor oprobot context ctxtext{
  	  	println("RESTARTING THE ROUTINE...") color red
  		[# Position = "ASHOUT" #]
  		forward sonar_device -m deposit_ash : deposit_ash(X) //mock deposit
- 	//	forward observedactor -m statoOp : statoOp(deposit_ash)
+ 		forward observedactor -m statoOp : statoOp(deposit_ash)
  		delay 2000 //deposit time
  		updateResource [# "info($State, $Position)" #] 
  		request basicrobot -m moverobot : moverobot (0,0) //HOME
- 		//forward observedactor -m statoOp : statoOp(end_return_home)
+ 		forward observedactor -m statoOp : statoOp(end_return_home)
  		
  	  }
  	  
@@ -430,7 +430,7 @@ QActor oprobot context ctxtext{
 
 
 
-QActor scale context ctxtext{
+QActor scale context ctxsprintdue{
 	[#
 		
 		var RP_number = 0
@@ -458,7 +458,7 @@ QActor scale context ctxtext{
 			[# RP_number = RP_number + 1  #]
 			println("$name | the RP number now is $RP_number ") color magenta
 			// update numero di RP : ne hanno aggiunto uno
-		//	forward observedactor -m numRP : numRP($RP_number)
+			forward observedactor -m numRP : numRP($RP_number)
 		}
 	}
 	Goto work 
@@ -475,7 +475,7 @@ QActor scale context ctxtext{
 		println("$name | pick request from robot, the RP number is $RP_number") color magenta
 		[# RP_number = RP_number - 1 #]
 		// update numero di RP : ne hanno tolti
-		//forward observedactor -m numRP : numRP($RP_number)
+		forward observedactor -m numRP : numRP($RP_number)
 		
 	}
 	
@@ -490,7 +490,7 @@ QActor scale context ctxtext{
 
 
 
-QActor scale_device context ctxtext{
+QActor scale_device context ctxsprintdue{
 [# var W = 0 #]
 	
 	State s0 initial{  
@@ -513,297 +513,96 @@ QActor scale_device context ctxtext{
  	
 }//sonardevice
 //
-//QActor observedactor context ctxtext{
-//	[#
-//		var WasteStorage = 0;
-//		var AshStorage = 0;
-//		var InciStatus = "spento";
-//		var OpRobot = "home";
-//	#]
-//	
-//	
-//	State s0 initial{
-//		println("$name attivo") color blue
-//		delay 500
-//	}
-//	Goto ready
-//	
-//	State ready {
-//		println("$name READY") color green
-//		updateResource[# "$name	INFO:	numero RP: $WasteStorage incinerator: $InciStatus	robot: $OpRobot	ash: $AshStorage" #]
-//	}
-//	
-//	Transition t1 whenMsg numRP -> handle_rp
-//				  whenMsg statoIn -> handle_Inci
-//				  whenMsg statoOp -> handle_Op
-//				  whenMsg valAsh -> handle_Ash
-//				
-//				  
-//	State handle_rp{
-//		println("$name aggiorno stato di WasteStorage")
-//		onMsg(numRP:numRP(X)){
-//			[# var kg = payloadArg(0).toInt()
-//				WasteStorage = kg // 50
-//			 #]
-//		}
-//		println("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
-//		updateResource[# "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage" #]
-//	}
-//	
-//	Transition t1 whenMsg numRP -> handle_rp
-//				  whenMsg statoIn -> handle_Inci
-//				  whenMsg statoOp -> handle_Op
-//				  whenMsg valAsh -> handle_Ash
-//				  
-//				  
-//	State handle_Inci{
-//		println("$name aggiorno stato di Incinerator")
-//		onMsg(statoIn:statoIn(N)){
-//			[# InciStatus = payloadArg(0) #]
-//		}
-//		println("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
-//		updateResource[# "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage" #]
-//	}
-//	
-//	Transition t1 whenMsg numRP -> handle_rp
-//				  whenMsg statoIn -> handle_Inci
-//				  whenMsg statoOp -> handle_Op
-//				  whenMsg valAsh -> handle_Ash
-//				  
-//				  
-//	State handle_Op{
-//		println("$name aggiorno stato di OpRobot")
-//		
-//		onMsg(statoOp:statoOp(N)){
-//			[# OpRobot = payloadArg(0) #]
-//		}
-//		println("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
-//		updateResource[# "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage" #]
-//	}
-//	
-//	Transition t0 whenMsg statoOp -> handle_Op
-//				  whenMsg numRP -> handle_rp
-//				  whenMsg statoIn -> handle_Inci
-//				  whenMsg valAsh -> handle_Ash
-//				  
-//	State handle_Ash{
-//		println("$name aggiorno stato di AshStorage")
-//		onMsg(valAsh:valAsh(X)){
-//			[# AshStorage = payloadArg(0).toInt() #]
-//		}
-//		println("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
-//		updateResource[# "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage" #]
-//	}
-//	
-//	Transition t0 whenMsg statoOp -> handle_Op
-//				  whenMsg numRP -> handle_rp
-//				  whenMsg statoIn -> handle_Inci
-//				  whenMsg valAsh -> handle_Ash
-//}
-
-QActor monitoring_device context ctxtext{
+QActor observedactor context ctxsprintdue{
 	[#
-		val DLIMIT = 200
-		var Ash_level = 1000
-		var burning = 0
+		var WasteStorage = 0;
+		var AshStorage = 0;
+		var InciStatus = "spento";
+		var OpRobot = "home";
 	#]
 	
+	
 	State s0 initial{
-		println("START monitoring_device") color green
-		delay 1000
+		println("$name attivo") color blue
+		delay 500
+	}
+	Goto ready
+	
+	State ready {
+		println("$name READY") color green
+		updateResource[# "$name	INFO:	numero RP: $WasteStorage incinerator: $InciStatus	robot: $OpRobot	ash: $AshStorage" #]
 	}
 	
-	Goto idle
-	
-	State idle{
-		println("Monitoring device : WAITING FOR MESSAGES") color green
-	}
-	
-	
-	Transition t0 whenMsg sonar_value -> handleSonar
-				  whenMsg turnLedOff -> handleTurnOff
-				  whenMsg turnLedOn -> handleTurnOn
-				  whenRequest pollingAsh -> handlePolling
-				  whenMsg addAsh -> handleAdd  //solo a fini di test
-				  
-	State handleAdd{
-		println("Monitorign: sono in aggiunta ") color red
-		[# Ash_level = Ash_level + 200 #]
-		updateResource [# "info($Ash_level)" #] 
-	}
-		
-			  
-	Goto idle	
-				  
-	
-				  
-	State handleSonar{
-		onMsg(sonar_value:sonar_value(K)){
-			[# Ash_level = payloadArg(0).toInt() #]
-			println("Ash_level: $Ash_level") color red
-			
-	//		forward observedactor -m valAsh : valAsh($Ash_level)
-			if [# Ash_level<=DLIMIT || Ash_level == 1000 #] {
-				forward led -m ledBlink:ledBlink(N)
-			}else {
-				if [# burning==1 #] {
-						forward led -m ledOn:ledOn(N)                             
-				}else{
-					forward led -m ledOff:ledOff(N) 
-				}
+	Transition t1 whenMsg numRP -> handle_rp
+				  whenMsg statoIn -> handle_Inci
+				  whenMsg statoOp -> handle_Op
+				  whenMsg valAsh -> handle_Ash
 				
-			}
-			
+				  
+	State handle_rp{
+		println("$name aggiorno stato di WasteStorage")
+		onMsg(numRP:numRP(X)){
+			[# var kg = payloadArg(0).toInt()
+				WasteStorage = kg // 50
+			 #]
 		}
+		println("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
+		updateResource[# "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage" #]
 	}
 	
-	Goto idle
-	
-	State handleTurnOff{
-		println("Monitoring device : burning off") color red
-		[# burning = 0 #]
-		forward led -m ledOff:ledff(N)
-	}
-	
-	Goto idle
-	
-	State handleTurnOn{
-		println("Monitoring device : burning on") color red
-		[# burning = 1 #]
-		forward led -m ledOn:ledOn(N)
-	}
-	
-	Goto idle
-	
-	State handlePolling{
-		println("Monitoring device : polling requested from WIS") color red
-		replyTo pollingAsh with valueAsh : valueAsh($Ash_level)
-	}
-	
-	Goto idle
-	
-	
-}
-
-
-
-QActor led context ctxtext{
-	[#
-		lateinit var p : Process
-		lateinit var p1 : Process
-		lateinit var p2 : Process
-	#]
-	
-	State s0 initial{
-		println("START LED") color green
-		delay 1000
-	}
-	
-	Goto idle
-	
-	State idle{
-		println("LED waiting for indications") color magenta
-		delay 1000
-	}
-	
-	Transition t0 whenMsg ledOn -> handleOn
-				  whenMsg ledOff -> handleOff
-				  whenMsg ledBlink -> handleBlink
+	Transition t1 whenMsg numRP -> handle_rp
+				  whenMsg statoIn -> handle_Inci
+				  whenMsg statoOp -> handle_Op
+				  whenMsg valAsh -> handle_Ash
 				  
-	State handleOn{
-		println("LED ON") color green
-		//[# p       = Runtime.getRuntime().exec("python ledOn.py") #]
-	}		
-	
-	Goto idle
-	
-	State handleOff{
-		println("LED OFF") color green
-		//[# p1       = Runtime.getRuntime().exec("python edOff.py") #]
-	}	  
 				  
-	Goto idle
-	
-	State handleBlink{
-		println("LED BLINK") color green
-		//[# p2       = Runtime.getRuntime().exec("python ledBlink.py") #]
-	}
-	
-	Goto idle
-}
-
-
-
-
-
-
-
-
-
-QActor sonar context ctxtext{
-	State s0 initial{
-		println("START sonar") color green
-		delay 1000
-		subscribeTo sonar_device for sonardata
-	}
-	Transition t0 whenEvent sonardata -> handleSonar
-	
-	State handleSonar{
-		
-		onMsg( sonardata : sonardata(K) ){
-			//println("im on handle sonar") color green
-			[# var D = payloadArg(0) #]
-			forward monitoring_device -m sonar_value:sonar_value($D)
+	State handle_Inci{
+		println("$name aggiorno stato di Incinerator")
+		onMsg(statoIn:statoIn(N)){
+			[# InciStatus = payloadArg(0) #]
 		}
+		println("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
+		updateResource[# "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage" #]
 	}
-	Transition t0 whenEvent sonardata -> handleSonar
+	
+	Transition t1 whenMsg numRP -> handle_rp
+				  whenMsg statoIn -> handle_Inci
+				  whenMsg statoOp -> handle_Op
+				  whenMsg valAsh -> handle_Ash
+				  
+				  
+	State handle_Op{
+		println("$name aggiorno stato di OpRobot")
+		
+		onMsg(statoOp:statoOp(N)){
+			[# OpRobot = payloadArg(0) #]
+		}
+		println("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
+		updateResource[# "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage" #]
+	}
+	
+	Transition t0 whenMsg statoOp -> handle_Op
+				  whenMsg numRP -> handle_rp
+				  whenMsg statoIn -> handle_Inci
+				  whenMsg valAsh -> handle_Ash
+				  
+	State handle_Ash{
+		println("$name aggiorno stato di AshStorage")
+		onMsg(valAsh:valAsh(X)){
+			[# AshStorage = payloadArg(0).toInt() #]
+		}
+		println("$name numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage")
+		updateResource[# "$name	INFO:	numero RP: $WasteStorage  incinerator: $InciStatus	robot: $OpRobot	 ash: $AshStorage" #]
+	}
+	
+	Transition t0 whenMsg statoOp -> handle_Op
+				  whenMsg numRP -> handle_rp
+				  whenMsg statoIn -> handle_Inci
+				  whenMsg valAsh -> handle_Ash
 }
 
 
-
-
-QActor sonar_device context ctxtext{  //mock
-	[# var K= 0 #]
-	
-	State s0 initial{
-		println("START sonar_device") color yellow
-		[# K= 1000 #]  //empty
-		delay 1500
-		emitlocalstream sonardata:sonardata($K)
-	}
-	
-	Goto idle
-	
-	State idle{
-		println("sonar_device waiting..") color yellow
-	}
-	
-	Transition t0 whenTime 80000 -> gatherAsh
-					whenMsg deposit_ash -> handleAsh
-				  
-	
-	State handleAsh{
-		
-		[# K= K - 200 #]  //robot da ash
-		println("ASH = $K") color yellow
-		emitlocalstream sonardata:sonardata($K)
-		
-	}
-	
-	Goto idle
-	
-	State gatherAsh{
-		
-		[# K= 1000 #]
-		println("ASH vuoto") color yellow
-		emitlocalstream sonardata:sonardata($K)
-	}
-				  
-	Goto idle	  
-	
-}
-
-QActor test_observer context ctxtext{
+QActor test_observer context ctxsprintdue{
 	[# var W = 50 #]
 	
 	
@@ -830,3 +629,206 @@ QActor test_observer context ctxtext{
 	}
 	
 }
+
+//QActor monitoring_device context ctxsprintdue{
+//	[#
+//		val DLIMIT = 200
+//		var Ash_level = 1000
+//		var burning = 0
+//	#]
+//	
+//	State s0 initial{
+//		println("START monitoring_device") color green
+//		delay 1000
+//	}
+//	
+//	Goto idle
+//	
+//	State idle{
+//		println("Monitoring device : WAITING FOR MESSAGES") color green
+//	}
+//	
+//	
+//	Transition t0 whenMsg sonar_value -> handleSonar
+//				  whenMsg turnLedOff -> handleTurnOff
+//				  whenMsg turnLedOn -> handleTurnOn
+//				  whenRequest pollingAsh -> handlePolling
+//				  whenMsg addAsh -> handleAdd  //solo a fini di test
+//				  
+//	State handleAdd{
+//		println("Monitorign: sono in aggiunta ") color red
+//		[# Ash_level = Ash_level + 200 #]
+//		updateResource [# "info($Ash_level)" #] 
+//	}
+//		
+//			  
+//	Goto idle	
+//				  
+//	
+//				  
+//	State handleSonar{
+//		onMsg(sonar_value:sonar_value(K)){
+//			[# Ash_level = payloadArg(0).toInt() #]
+//			println("Ash_level: $Ash_level") color red
+//			
+//	//		forward observedactor -m valAsh : valAsh($Ash_level)
+//			if [# Ash_level<=DLIMIT || Ash_level == 1000 #] {
+//				forward led -m ledBlink:ledBlink(N)
+//			}else {
+//				if [# burning==1 #] {
+//						forward led -m ledOn:ledOn(N)                             
+//				}else{
+//					forward led -m ledOff:ledOff(N) 
+//				}
+//				
+//			}
+//			
+//		}
+//	}
+//	
+//	Goto idle
+//	
+//	State handleTurnOff{
+//		println("Monitoring device : burning off") color red
+//		[# burning = 0 #]
+//		forward led -m ledOff:ledff(N)
+//	}
+//	
+//	Goto idle
+//	
+//	State handleTurnOn{
+//		println("Monitoring device : burning on") color red
+//		[# burning = 1 #]
+//		forward led -m ledOn:ledOn(N)
+//	}
+//	
+//	Goto idle
+//	
+//	State handlePolling{
+//		println("Monitoring device : polling requested from WIS") color red
+//		replyTo pollingAsh with valueAsh : valueAsh($Ash_level)
+//	}
+//	
+//	Goto idle
+//	
+//	
+//}
+//
+//
+//
+//QActor led context ctxsprintdue{
+//	[#
+//		lateinit var p : Process
+//		lateinit var p1 : Process
+//		lateinit var p2 : Process
+//	#]
+//	
+//	State s0 initial{
+//		println("START LED") color green
+//		delay 1000
+//	}
+//	
+//	Goto idle
+//	
+//	State idle{
+//		println("LED waiting for indications") color magenta
+//		delay 1000
+//	}
+//	
+//	Transition t0 whenMsg ledOn -> handleOn
+//				  whenMsg ledOff -> handleOff
+//				  whenMsg ledBlink -> handleBlink
+//				  
+//	State handleOn{
+//		println("LED ON") color green
+//		//[# p       = Runtime.getRuntime().exec("python ledOn.py") #]
+//	}		
+//	
+//	Goto idle
+//	
+//	State handleOff{
+//		println("LED OFF") color green
+//		//[# p1       = Runtime.getRuntime().exec("python edOff.py") #]
+//	}	  
+//				  
+//	Goto idle
+//	
+//	State handleBlink{
+//		println("LED BLINK") color green
+//		//[# p2       = Runtime.getRuntime().exec("python ledBlink.py") #]
+//	}
+//	
+//	Goto idle
+//}
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//QActor sonar context ctxsprintdue{
+//	State s0 initial{
+//		println("START sonar") color green
+//		delay 1000
+//		subscribeTo sonar_device for sonardata
+//	}
+//	Transition t0 whenEvent sonardata -> handleSonar
+//	
+//	State handleSonar{
+//		
+//		onMsg( sonardata : sonardata(K) ){
+//			//println("im on handle sonar") color green
+//			[# var D = payloadArg(0) #]
+//			forward monitoring_device -m sonar_value:sonar_value($D)
+//		}
+//	}
+//	Transition t0 whenEvent sonardata -> handleSonar
+//}
+//
+//
+//
+//
+//QActor sonar_device context ctxsprintdue{  //mock
+//	[# var K= 0 #]
+//	
+//	State s0 initial{
+//		println("START sonar_device") color yellow
+//		[# K= 1000 #]  //empty
+//		delay 1500
+//		emitlocalstream sonardata:sonardata($K)
+//	}
+//	
+//	Goto idle
+//	
+//	State idle{
+//		println("sonar_device waiting..") color yellow
+//	}
+//	
+//	Transition t0 whenTime 80000 -> gatherAsh
+//					whenMsg deposit_ash -> handleAsh
+//				  
+//	
+//	State handleAsh{
+//		
+//		[# K= K - 200 #]  //robot da ash
+//		println("ASH = $K") color yellow
+//		emitlocalstream sonardata:sonardata($K)
+//		
+//	}
+//	
+//	Goto idle
+//	
+//	State gatherAsh{
+//		
+//		[# K= 1000 #]
+//		println("ASH vuoto") color yellow
+//		emitlocalstream sonardata:sonardata($K)
+//	}
+//				  
+//	Goto idle	  
+//	
+//}
+

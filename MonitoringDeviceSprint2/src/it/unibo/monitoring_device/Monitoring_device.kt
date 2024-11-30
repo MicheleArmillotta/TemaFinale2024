@@ -49,6 +49,20 @@ class Monitoring_device ( name: String, scope: CoroutineScope, isconfined: Boole
 					transition(edgeName="t01",targetState="handleTurnOff",cond=whenDispatch("turnLedOff"))
 					transition(edgeName="t02",targetState="handleTurnOn",cond=whenDispatch("turnLedOn"))
 					transition(edgeName="t03",targetState="handlePolling",cond=whenRequest("pollingAsh"))
+					transition(edgeName="t04",targetState="handleAdd",cond=whenDispatch("addAsh"))
+				}	 
+				state("handleAdd") { //this:State
+					action { //it:State
+						CommUtils.outred("Monitorign: sono in aggiunta ")
+						 Ash_level = Ash_level + 200  
+						updateResourceRep( "info($Ash_level)"  
+						)
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
 				}	 
 				state("handleSonar") { //this:State
 					action { //it:State
