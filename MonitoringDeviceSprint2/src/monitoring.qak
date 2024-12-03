@@ -93,7 +93,12 @@ QActor monitoring_device context ctxmonitor{
 	State handleTurnOff{
 		println("Monitoring device : burning off") color red
 		[# burning = 0 #]
-		forward led -m ledOff:ledff(N)
+		if [# Ash_level<=DLIMIT || Ash_level == 1000 #]{
+			forward led -m ledBlink:ledBlink(N)
+		}else{
+			forward led -m ledOff:ledff(N)
+		}
+		
 	}
 	
 	Goto idle
@@ -120,10 +125,10 @@ QActor monitoring_device context ctxmonitor{
 
 
 QActor led context ctxmonitor{
-	[#
-		lateinit var p : Process
-		lateinit var p1 : Process
-		lateinit var p2 : Process
+	[# 
+		lateinit var process : Process
+		var lampeggio = false
+		var inizio = true
 	#]
 	
 	State s0 initial{
@@ -143,22 +148,51 @@ QActor led context ctxmonitor{
 				  whenMsg ledBlink -> handleBlink
 				  
 	State handleOn{
+		
+//		if [# lampeggio == true #]{
+//			[# lampeggio = false
+//				process.destroy()
+//			#]
+//		}
 		println("LED ON") color green
-		//[# p       = Runtime.getRuntime().exec("python ledOn.py") #]
+//		
+//		[# process = Runtime.getRuntime().exec("python3 ledOn.py") #]
 	}		
 	
 	Goto idle
 	
 	State handleOff{
+		
+//		if [# lampeggio == true #]{
+//			[# lampeggio = false
+//				process.destroy()
+//			#]
+//		}
 		println("LED OFF") color green
-		//[# p1       = Runtime.getRuntime().exec("python edOff.py") #]
+//		
+//		[# process = Runtime.getRuntime().exec("python ledOff.py") #]
 	}	  
 				  
 	Goto idle
 	
 	State handleBlink{
 		println("LED BLINK") color green
-		//[# p2       = Runtime.getRuntime().exec("python ledBlink.py") #]
+//		
+//		if [# lampeggio == false  && inizio == true #]{
+//			[# 
+//				lampeggio = true
+//				inizio = false
+//				process = Runtime.getRuntime().exec("python ledBlink.py")
+//			#]
+//		}
+//		if [# lampeggio == false  && inizio == false #]{
+//			[# 
+//				lampeggio = true
+//				inizio = false
+//				process.destroy()
+//				process = Runtime.getRuntime().exec("python ledBlink.py")
+//			#]
+//		}
 	}
 	
 	Goto idle

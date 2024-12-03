@@ -21,10 +21,10 @@ class Led ( name: String, scope: CoroutineScope, isconfined: Boolean=false  ) : 
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		//val interruptedStateTransitions = mutableListOf<Transition>()
-		
-				lateinit var p : Process
-				lateinit var p1 : Process
-				lateinit var p2 : Process
+		 
+				lateinit var process : Process
+				var lampeggio = false
+				var inizio = true
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State

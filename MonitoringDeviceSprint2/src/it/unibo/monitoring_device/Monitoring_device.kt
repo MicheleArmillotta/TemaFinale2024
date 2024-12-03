@@ -94,7 +94,12 @@ class Monitoring_device ( name: String, scope: CoroutineScope, isconfined: Boole
 					action { //it:State
 						CommUtils.outred("Monitoring device : burning off")
 						 burning = 0  
-						forward("ledOff", "ledff(N)" ,"led" ) 
+						if(  Ash_level<=DLIMIT || Ash_level == 1000  
+						 ){forward("ledBlink", "ledBlink(N)" ,"led" ) 
+						}
+						else
+						 {forward("ledOff", "ledff(N)" ,"led" ) 
+						 }
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
