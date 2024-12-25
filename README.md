@@ -51,4 +51,7 @@ The GUI allows to observe the **changes** in the system via a web interface, i.e
 <br>
 
 
+From this model we can see that the system presents different actors in different contexts, who operate by **exchanging messages**, offering services to other components.
+
+
 
