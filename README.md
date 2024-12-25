@@ -38,7 +38,7 @@ The core of the application has three components: the **WIS** (coordinator), the
 The monitoring device runs on a **Raspberry Pi**. It controls an LED that lights up every time the incinerator is burning and flashes when the ash container is empty (there is a sonar that monitors the ash level).
 
 <div align="center">
-<img align="center" width="50%" src="./commons/raspGif.png"/>
+<img align="center" width="50%" src="./commons/raspGif.gif"/>
 </div>
 
 #### GUI
