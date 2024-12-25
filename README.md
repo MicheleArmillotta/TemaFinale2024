@@ -11,6 +11,6 @@
   ·
   [SCRUM Guide](./commons/2020-Scrum-Guide-US.pdf)
   
-  [[!VIDEO](./commons/Screenshot.png)](./commons/VideoRobot.mp4)
+  [[!VIDEO](./commons/Screenshot.png)](https://github.com/NicoleGiulianelli2/TemaFinale2024/blob/main/commons/VideoRobot.mp4)
   
 </div>
