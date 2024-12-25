@@ -17,6 +17,6 @@
 ## The system
 The system consists of different elements:
 
-### Virtualrobot/basicRobot
+#### Virtualrobot/basicRobot
 Web application provided by the customer that simulates a Robot. The robot is confined in a virtual environment (a rectangular room) and can receive commands to perform some actions. 
 The robot's movements are intermediated by an interface called basicRobot which also allows to control other types of (physical) robots.
