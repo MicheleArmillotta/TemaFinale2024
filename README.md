@@ -18,7 +18,7 @@
 
 ## The system
 
-The system is based on the concept of **actors** and therefore operates by exchanging messages
+The system is based on the concept of **actors** and therefore operates by exchanging messages.
 <br>
 It consists of different elements:
 
@@ -44,5 +44,11 @@ The GUI allows to observe the **changes** in the system via a web interface, i.e
 </div>
 
 ## Final system architecture
+<div align="center">
+<img align="center" width="50%" src="./commons/sprint3arch.png"/>
+</div>
+
+<br>
+
 
 
