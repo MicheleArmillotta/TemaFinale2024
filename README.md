@@ -11,6 +11,6 @@
   ·
   [SCRUM Guide](./commons/2020-Scrum-Guide-US.pdf)
   
-  (./commons/VideoRobot.mp4)
+  [[!VIDEO](./commons/Screenshot 2024-12-25 093353.png)](./commons/VideoRobot.mp4)
   
 </div>
