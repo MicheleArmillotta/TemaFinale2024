@@ -39,3 +39,7 @@ The monitoring device runs on a **Raspberry Pi**. It controls an LED that lights
 
 #### GUI
 The GUI allows to observe the **changes** in the system via a web interface, i.e. the number of waste arriving, the status of the incinerator, the position of the Robot and the ash level. Spring Boot is used.
+<div align="center">
+<img align="center" width="50%" src="./commons/GUI.png"/>
+</div>
+
