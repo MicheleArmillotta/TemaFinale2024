@@ -11,7 +11,7 @@
   ·
   [SCRUM Guide](./commons/2020-Scrum-Guide-US.pdf)
 
-   <img align="center" width="25%" src="./commons/gifRobot.gif"/>
+   <img align="center" width="50%" src="./commons/gifRobot.gif"/>
 
 </div>
 
