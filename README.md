@@ -11,6 +11,6 @@
   ·
   [SCRUM Guide](./commons/2020-Scrum-Guide-US.pdf)
   
-  
+  (./commons/VideoRobot.mp4)
   
 </div>
