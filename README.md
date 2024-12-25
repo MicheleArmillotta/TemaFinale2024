@@ -22,5 +22,5 @@ Web application provided by the customer that simulates a Robot. The robot is co
 The robot's movements are intermediated by an interface called basicRobot which also allows to control other types of (physical) robots.
 
 <div>
-<img align="center" width="25%" src="./commons/ScreenshotRobot.jpg"/>
+<img align="center" width="25%" src="./commons/ScreenshotRobot.png"/>
 </div>
