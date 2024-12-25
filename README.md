@@ -43,3 +43,6 @@ The GUI allows to observe the **changes** in the system via a web interface, i.e
 <img align="center" width="50%" src="./commons/GUI.png"/>
 </div>
 
+## Final system architecture
+
+
