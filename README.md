@@ -19,6 +19,7 @@
 ## The system
 
 The system is based on the concept of **actors** and therefore operates by exchanging messages
+<br>
 It consists of different elements:
 
 #### Virtualrobot/basicRobot
@@ -32,3 +33,9 @@ The robot's movements are intermediated by an interface called basicRobot which 
 #### Waste Incinerator Core
 
 The core of the application has three components: the **WIS** (coordinator), the **Incinerator** and the **OpRobot**. The WIS has the task of understanding when the requirements are met and sending a signal to the OpRobot, which will start the routine by moving the virtualRobot.
+
+#### Monitoring Device
+The monitoring device runs on a **Raspberry Pi**. It controls an LED that lights up every time the incinerator is burning and flashes when the ash container is empty (there is a sonar that monitors the ash level).
+
+#### GUI
+The GUI allows to observe the **changes** in the system via a web interface, i.e. the number of waste arriving, the status of the incinerator, the position of the Robot and the ash level. Spring Boot is used.
